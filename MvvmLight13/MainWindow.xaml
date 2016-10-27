@@ -29,7 +29,7 @@
         <ScrollViewer x:Name="scrollViewer" CanContentScroll="True" Focusable="False" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
             <AdornerDecorator>
                 <Grid Width="{Binding ContentWidth}" Height="{Binding ContentHeight}">
-                    <controls1:NodeView x:Name="networkControl" NodesSource="{Binding Path=Network.Nodes}" ConnectionsSource="{Binding Path=Network.Connections}">
+                    <controls1:NodeView x:Name="networkControl" NodesSource="{Binding Path=Network.Nodes}" ConnectionsSource="{Binding Path=Network.Connections}" Margin="-31,-4,31,4">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="ConnectionDragStarted">
                                 <command:EventToCommand Command="{Binding Path=ConnectionDragStartedCommand, UpdateSourceTrigger=PropertyChanged}" CommandParameter="{Binding}" />

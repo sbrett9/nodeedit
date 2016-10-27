@@ -24,7 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -103,6 +103,9 @@
     <Compile Include="Controls\ConnectorItemDraggingEventHandler.cs" />
     <Compile Include="Controls\ConnectorItemDragStartedEventArgs.cs" />
     <Compile Include="Controls\ConnectorItemDragStartedEventHandler.cs" />
+    <Compile Include="Controls\Head.xaml.cs">
+      <DependentUpon>Head.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\NodeDragCompletedEventArgs.cs" />
     <Compile Include="Controls\NodeDragCompletedEventHandler.cs" />
     <Compile Include="Controls\NodeDragEventArgs.cs" />
@@ -116,12 +119,16 @@
     <Compile Include="Controls\NodeView_ConnectionDragging.cs" />
     <Compile Include="Controls\NodeView_DragSelection.cs" />
     <Compile Include="Controls\NodeView_NodeDragging.cs" />
-    <Compile Include="Controls\OperationControl.xaml.cs">
-      <DependentUpon>OperationControl.xaml</DependentUpon>
+    <Compile Include="Controls\Node.xaml.cs">
+      <DependentUpon>Node.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\NodeView.cs" />
     <Compile Include="Controls\QueryConnectionFeedbackEventArgs.cs" />
     <Compile Include="Controls\QueryConnectionFeedbackEventHandler.cs" />
+    <Compile Include="Controls\Tail.xaml.cs">
+      <DependentUpon>Tail.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Converters\ChevBodyConverter.cs" />
     <Compile Include="Converters\ChevHeadConverter.cs" />
     <Compile Include="Converters\ChevTailConverter.cs" />
     <Compile Include="Converters\EqualityToBooleanConverter.cs" />
@@ -153,7 +160,15 @@
     <Compile Include="Zoom\ZoomControl.cs" />
     <Compile Include="Zoom\ZoomControlModes.cs" />
     <Compile Include="Zoom\ZoomViewModifierMode.cs" />
-    <Page Include="Controls\OperationControl.xaml">
+    <Page Include="Controls\Head.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Node.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Tail.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

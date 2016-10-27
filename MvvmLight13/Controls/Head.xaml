@@ -1,0 +1,24 @@
+﻿<UserControl x:Class="MvvmLight13.Controls.Head"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MvvmLight13.Controls"
+             xmlns:utility="clr-namespace:MvvmLight13.Utility"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300"
+             x:Name="headControl">
+    <Canvas>
+        <Path Fill="{Binding Path=Fill, ElementName=headControl}" Stroke="Transparent">
+            <Path.Data>
+                <PathGeometry Figures="{utility:MultiBinder {Binding Path=ChevAngle,ElementName=headControl},
+                                                                                {Binding Path=ChevWidth, ElementName=headControl },
+                                                                                {Binding Path=ChevHeight, ElementName=headControl },
+                                                                                {StaticResource ChevHeadConverter}}" />
+            </Path.Data>
+            <Path.Effect>
+                <DropShadowEffect ShadowDepth="3" Direction="0" BlurRadius="3" Opacity="0.2" Color="White" />
+            </Path.Effect>
+        </Path>
+    </Canvas>
+</UserControl>

@@ -226,8 +226,8 @@
                 var x = new AspirateOperationViewModel(t)
                 {
                     Name = "kxfdsd",
-                    X = 100 + (10*i),
-                    Y=60 + (10*i)
+                    X = 100 + (100*i),
+                    Y=60 + (100*i)
                 };
                 
                 Network.Nodes.Add(x);

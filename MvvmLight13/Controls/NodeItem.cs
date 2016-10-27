@@ -47,33 +47,19 @@
 
         #region Dependency Property/Event Definitions
 
-        public static readonly DependencyProperty XProperty =
-            DependencyProperty.Register("X", typeof(double), typeof(NodeItem),
-                new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+        public static readonly DependencyProperty XProperty = DependencyProperty.Register("X", typeof(double), typeof(NodeItem),new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
-        public static readonly DependencyProperty YProperty =
-            DependencyProperty.Register("Y", typeof(double), typeof(NodeItem),
-                new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+        public static readonly DependencyProperty YProperty = DependencyProperty.Register("Y", typeof(double), typeof(NodeItem), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+        
+        public static readonly DependencyProperty ZIndexProperty = DependencyProperty.Register("ZIndex", typeof(int), typeof(NodeItem), new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
-        public static readonly DependencyProperty ZIndexProperty =
-            DependencyProperty.Register("ZIndex", typeof(int), typeof(NodeItem),
-                new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+        internal static readonly DependencyProperty ParentOperationViewProperty = DependencyProperty.Register("ParentOperationView", typeof(NodeView), typeof(NodeItem),new FrameworkPropertyMetadata(ParentNodeView_PropertyChanged));
 
-        internal static readonly DependencyProperty ParentOperationViewProperty =
-            DependencyProperty.Register("ParentOperationView", typeof(NodeView), typeof(NodeItem),
-                new FrameworkPropertyMetadata(ParentNodeView_PropertyChanged));
+        internal static readonly RoutedEvent NodeDragStartedEvent = EventManager.RegisterRoutedEvent("NodeDragStarted", RoutingStrategy.Bubble,typeof(NodeDragStartedEventHandler), typeof(NodeItem));
 
-        internal static readonly RoutedEvent NodeDragStartedEvent =
-            EventManager.RegisterRoutedEvent("NodeDragStarted", RoutingStrategy.Bubble,
-                typeof(NodeDragStartedEventHandler), typeof(NodeItem));
+        internal static readonly RoutedEvent NodeDraggingEvent = EventManager.RegisterRoutedEvent("NodeDragging", RoutingStrategy.Bubble, typeof(NodeDraggingEventHandler), typeof(NodeItem));
 
-        internal static readonly RoutedEvent NodeDraggingEvent =
-            EventManager.RegisterRoutedEvent("NodeDragging", RoutingStrategy.Bubble, typeof(NodeDraggingEventHandler),
-                typeof(NodeItem));
-
-        internal static readonly RoutedEvent NodeDragCompletedEvent =
-            EventManager.RegisterRoutedEvent("NodeDragCompleted", RoutingStrategy.Bubble,
-                typeof(NodeDragCompletedEventHandler), typeof(NodeItem));
+        internal static readonly RoutedEvent NodeDragCompletedEvent = EventManager.RegisterRoutedEvent("NodeDragCompleted", RoutingStrategy.Bubble, typeof(NodeDragCompletedEventHandler), typeof(NodeItem));
 
         #endregion Dependency Property/Event Definitions
 
@@ -299,8 +285,7 @@
                     //
                     // Raise an event to notify that that dragging has commenced.
                     //
-                    NodeDragStartedEventArgs eventArgs = new NodeDragStartedEventArgs(NodeDragStartedEvent, this,
-                        new[] {this});
+                    NodeDragStartedEventArgs eventArgs = new NodeDragStartedEventArgs(NodeDragStartedEvent, this, new[] {this});
                     RaiseEvent(eventArgs);
 
                     if (eventArgs.Cancel)
@@ -353,8 +338,15 @@
                 isLeftMouseDown = false;
                 isLeftMouseAndControlDown = false;
 
+                //unconditionally unselect any node if it is not part of a group selection
+                if (ParentOperationView.SelectedNodes.Count == 1)
+                    ParentOperationView.SelectedNodes.Clear();
+
                 e.Handled = true;
+
             }
+
+
         }
 
         /// <summary>

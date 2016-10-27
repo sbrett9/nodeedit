@@ -27,6 +27,7 @@
         /// This is pushed through from ConnectorItem in the UI.
         /// </summary>
         private Point hotspot;
+        private bool highlighted = true;
 
         #endregion Internal Data Members
 
@@ -134,63 +135,24 @@
             }
         }
 
+        public bool Highlighted
+        {
+            get { return highlighted; }
+            set
+            {
+                highlighted = value; 
+                OnHighlightConnection();
+            }
+        }
+
         /// <summary>
         /// Event raised when the connector hotspot has been updated.
         /// </summary>
         public event EventHandler<EventArgs> HotspotUpdated;
+        public event EventHandler<EventArgs> HighlightConnection;
 
         #region Private Methods
 
-        ///// <summary>
-        ///// Debug checking to ensure that no connection is added to the list twice.
-        ///// </summary>
-        //private void attachedConnections_ItemsAdded(object sender, CollectionItemsChangedEventArgs e)
-        //{
-        //    foreach (ConnectionViewModel connection in e.Items)
-        //    {
-        //        connection.ConnectionChanged += new EventHandler<EventArgs>(connection_ConnectionChanged);
-        //    }
-
-        //    if ((AttachedConnection.Count - e.Items.Count) == 0)
-        //    {
-        //        // 
-        //        // The first connection has been added, notify the data-binding system that
-        //        // 'IsConnected' should be re-evaluated.
-        //        //
-        //        RaisePropertyChanged("IsConnectionAttached");
-        //        RaisePropertyChanged("IsConnected");
-        //    }
-        //}
-
-        ///// <summary>
-        ///// Event raised when connections have been removed from the connector.
-        ///// </summary>
-        //private void attachedConnections_ItemsRemoved(object sender, CollectionItemsChangedEventArgs e)
-        //{
-        //    foreach (ConnectionViewModel connection in e.Items)
-        //    {
-        //        connection.ConnectionChanged -= new EventHandler<EventArgs>(connection_ConnectionChanged);
-        //    }
-
-        //    if (AttachedConnection.Count == 0)
-        //    {
-        //        // 
-        //        // No longer connected to anything, notify the data-binding system that
-        //        // 'IsConnected' should be re-evaluated.
-        //        //
-        //        RaisePropertyChanged("IsConnectionAttached");
-        //        RaisePropertyChanged("IsConnected");
-        //    }
-        //}
-
-        ///// <summary>
-        ///// Event raised when a connection attached to the connector has changed.
-        ///// </summary>
-        //private void connection_ConnectionChanged(object sender, EventArgs e)
-        //{
-        //    RaisePropertyChanged("IsConnectionAttached");
-        //    RaisePropertyChanged("IsConnected");
-        //}
 
         /// <summary>
         /// Called when the connector hotspot has been updated.
@@ -206,6 +168,13 @@
         }
 
         #endregion Private Methods
+
+        private void OnHighlightConnection()
+        {
+            RaisePropertyChanged(()=>Highlighted);
+            if(HighlightConnection != null)
+                HighlightConnection(this,EventArgs.Empty);
+        }
     }
 
 }

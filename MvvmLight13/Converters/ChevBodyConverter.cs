@@ -1,26 +1,26 @@
 ﻿namespace MvvmLight13.Converters
 {
-
     #region Using Declarations
 
     using System;
+    using System.Globalization;
     using System.Windows;
     using System.Windows.Data;
     using System.Windows.Media;
 
     #endregion
 
-    public class ChevHeadConverter : IMultiValueConverter
+    public class ChevBodyConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             double def = 132.5;
             object x = values[0];
             double chevAngle = def;
-            if (x is double)
+            if(x is double)
                 chevAngle = (double)values[0];
-            double width = values[1] is double ? (double)values[1] : 0;
-            double height = values[2] is double ? (double)values[2] : 0;
+            double width = values[1] is double ? (double) values[1] : 0;
+            double height = values[2] is double ? (double) values[2] : 0;
 
             double angleFromCenter = (180 - chevAngle) / 2;
             double thirdAngle = 180 - 90 - angleFromCenter;
@@ -37,11 +37,12 @@
             var fig = new PathFigure();
             fig.IsClosed = true;
 
-            fig.StartPoint = new Point(-c, 0);
-            fig.Segments.Add(new LineSegment(new Point(0, 0), false));
-            fig.Segments.Add(new LineSegment(new Point(0, height), false));
-            fig.Segments.Add(new LineSegment(new Point(-c, height), false));
-            fig.Segments.Add(new LineSegment(new Point(0, halfHeight), false));
+            fig.StartPoint = new Point(width - c, 0);
+            fig.Segments.Add(new LineSegment(new Point(width, 0), false));
+            fig.Segments.Add(new LineSegment(new Point(width, height), false));
+            fig.Segments.Add(new LineSegment(new Point(width-c, height), false));
+            fig.Segments.Add(new LineSegment(new Point(width, halfHeight), false));
+            fig.Segments.Add(new LineSegment(new Point(width-c, 0), false));
             z.Add(fig);
 
 
@@ -61,5 +62,4 @@
             return null;
         }
     }
-
 }

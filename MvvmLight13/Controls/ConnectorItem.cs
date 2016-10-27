@@ -17,25 +17,23 @@ namespace MvvmLight13.Controls
     public class ConnectorItem : ContentControl
     {
         #region Dependency Property/Event Definitions
+        public static readonly DependencyProperty XProperty = DependencyProperty.Register("X", typeof(double), typeof(ConnectorItem), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
-        public static readonly DependencyProperty HotspotProperty =
-            DependencyProperty.Register("Hotspot", typeof(Point), typeof(ConnectorItem));
+        public static readonly DependencyProperty YProperty = DependencyProperty.Register("Y", typeof(double), typeof(ConnectorItem), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
-        internal static readonly DependencyProperty ParentNodeViewProperty =
-            DependencyProperty.Register("ParentNodeView", typeof(NodeView), typeof(ConnectorItem),
-                new FrameworkPropertyMetadata(ParentNodeView_PropertyChanged));
+        public static readonly DependencyProperty ZIndexProperty = DependencyProperty.Register("ZIndex", typeof(int), typeof(ConnectorItem), new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
-        internal static readonly DependencyProperty ParentNodeItemProperty =
-            DependencyProperty.Register("ParentNodeItem", typeof(NodeItem), typeof(ConnectorItem));
+        public static readonly DependencyProperty HotspotProperty =DependencyProperty.Register("Hotspot", typeof(Point), typeof(ConnectorItem));
 
-        internal static readonly RoutedEvent ConnectorDragStartedEvent =
-            EventManager.RegisterRoutedEvent("ConnectorDragStarted", RoutingStrategy.Bubble, typeof(ConnectorItemDragStartedEventHandler), typeof(ConnectorItem));
+        internal static readonly DependencyProperty ParentNodeViewProperty =DependencyProperty.Register("ParentNodeView", typeof(NodeView), typeof(ConnectorItem),new FrameworkPropertyMetadata(ParentNodeView_PropertyChanged));
 
-        internal static readonly RoutedEvent ConnectorDraggingEvent =
-            EventManager.RegisterRoutedEvent("ConnectorDragging", RoutingStrategy.Bubble, typeof(ConnectorItemDraggingEventHandler), typeof(ConnectorItem));
+        internal static readonly DependencyProperty ParentNodeItemProperty =DependencyProperty.Register("ParentNodeItem", typeof(NodeItem), typeof(ConnectorItem));
 
-        internal static readonly RoutedEvent ConnectorDragCompletedEvent =
-            EventManager.RegisterRoutedEvent("ConnectorDragCompleted", RoutingStrategy.Bubble, typeof(ConnectorItemDragCompletedEventHandler), typeof(ConnectorItem));
+        internal static readonly RoutedEvent ConnectorDragStartedEvent =EventManager.RegisterRoutedEvent("ConnectorDragStarted", RoutingStrategy.Bubble, typeof(ConnectorItemDragStartedEventHandler), typeof(ConnectorItem));
+
+        internal static readonly RoutedEvent ConnectorDraggingEvent =EventManager.RegisterRoutedEvent("ConnectorDragging", RoutingStrategy.Bubble, typeof(ConnectorItemDraggingEventHandler), typeof(ConnectorItem));
+
+        internal static readonly RoutedEvent ConnectorDragCompletedEvent =EventManager.RegisterRoutedEvent("ConnectorDragCompleted", RoutingStrategy.Bubble, typeof(ConnectorItemDragCompletedEventHandler), typeof(ConnectorItem));
 
         #endregion Dependency Property/Event Definitions
 

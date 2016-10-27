@@ -1,17 +1,52 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MvvmLight13.Utility
+﻿namespace MvvmLight13.Utility
 {
+    #region Using Declarations
+
+    using System;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.Windows;
+    using System.Windows.Controls;
     using System.Windows.Media;
+
+    #endregion
 
     class Utilities
     {
+        public static Rect DetectCollisions(FrameworkElement rect1, FrameworkElement rect2)
+        {
+            var r1 = new Rect(Canvas.GetLeft(rect1), Canvas.GetTop(rect1), rect1.ActualWidth, rect1.ActualHeight);
+            var r2 = new Rect(Canvas.GetLeft(rect2), Canvas.GetTop(rect2), rect2.ActualWidth, rect2.ActualHeight);
+            r1.Intersect(r2);
+            return r1;
+        }
+
+        /// <summary>
+        /// Recursively searches a Visual object for the first decendant of type T
+        /// </summary>
+        /// <typeparam name="T">The instance type to search for.</typeparam>
+        /// <param name="parent">The visual object whose visual tree to traverse.</param>
+        /// <returns>A reference to the first child in the tree that is of type T. Null otherwise.</returns>
+        public static T FindChild<T>(Visual parent) where T : Visual
+        {
+            T child = default(T);
+            int numVisuals = VisualTreeHelper.GetChildrenCount(parent);
+            for (int i = 0; i < numVisuals; i++)
+            {
+                Visual v = (Visual)VisualTreeHelper.GetChild(parent, i);
+                child = v as T;
+                if (child == null)
+                {
+                    child = FindChild<T>(v);
+                }
+                if (child != null)
+                {
+                    break;
+                }
+            }
+            return child;
+        }
+
         /// <summary>
         /// Search up the element tree to find the Parent window for 'element'.
         /// Returns null if the 'element' is not attached to a window.

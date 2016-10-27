@@ -2,6 +2,13 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
+    using System.Windows;
+    using System.Windows.Controls;
+    using MahApps.Metro.Controls;
+    using Utility;
+    using ViewModel;
 
     public partial class NodeView
     {
@@ -58,7 +65,44 @@
             {
                 nodeItem.X += e.HorizontalChange;
                 nodeItem.Y += e.VerticalChange;
+                Debug.WriteLine(string.Format("Node {0} Position = {1},{2}",Name,nodeItem.X,nodeItem.Y));
+                Debug.WriteLine(string.Format("Node {0} w/h = {1},{2}", Name, nodeItem.ActualWidth, nodeItem.ActualHeight));
             }
+
+            //detect if the head of the node intersects with any other node's tail
+            if (SelectedNodes.Count == 1)
+            {
+                NodeItem selected = FindAssociatedNodeItem(SelectedNodes[0]);
+                foreach (var nodeObj in Nodes)
+                {
+                    if (nodeObj == SelectedNodes[0])
+                        continue;
+                    NodeItem nodeItem = FindAssociatedNodeItem(nodeObj);
+
+                    var selectedHead = Utilities.FindChild<Head>(selected);
+                    var targetTail = Utilities.FindChild<Tail>(nodeItem);
+                    
+                    if (selectedHead == null)
+                        throw new InvalidOperationException();
+                    if(targetTail == null)
+                        throw new InvalidOperationException();
+
+                    Rect intersect = Utilities.DetectCollisions(selectedHead, targetTail);
+                    ConnectorViewModel headConnector = selectedHead.DataContext as ConnectorViewModel;
+                    ConnectorViewModel tailConnector = targetTail.DataContext as ConnectorViewModel;
+                    if (intersect.IsEmpty)
+                    {
+                        headConnector.Highlighted = false;
+                        tailConnector.Highlighted = false;
+                    }
+                    else
+                    {
+                        headConnector.Highlighted = true;
+                        tailConnector.Highlighted = true;
+                    }
+                }
+            }
+
 
             var eventArgs = new NodeDraggingEventArgs(NodeDraggingEvent, this, this.SelectedNodes, e.HorizontalChange,e.VerticalChange);
             RaiseEvent(eventArgs);
@@ -84,8 +128,6 @@
             this.IsDraggingNode = false;
             this.IsNotDraggingNode = true;
 
-            if(SelectedNodes.Count==1)
-                this.SelectedNodes.Clear();
         }
 
         #endregion Private Methods

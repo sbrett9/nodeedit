@@ -489,102 +489,59 @@
 
         public static readonly DependencyProperty IsClearSelectionOnEmptySpaceClickEnabledProperty =DependencyProperty.Register("IsClearSelectionOnEmptySpaceClickEnabled", typeof(bool),typeof(NodeView),new FrameworkPropertyMetadata(true));
 
-        public static readonly DependencyProperty EnableConnectionDraggingProperty =
-            DependencyProperty.Register("EnableConnectionDragging", typeof(bool), typeof(NodeView),
-                new FrameworkPropertyMetadata(true));
+        public static readonly DependencyProperty EnableConnectionDraggingProperty =DependencyProperty.Register("EnableConnectionDragging", typeof(bool), typeof(NodeView),new FrameworkPropertyMetadata(true));
 
-        private static readonly DependencyPropertyKey IsDraggingConnectionPropertyKey =
-            DependencyProperty.RegisterReadOnly("IsDraggingConnection", typeof(bool), typeof(NodeView),
-                new FrameworkPropertyMetadata(false));
+        private static readonly DependencyPropertyKey IsDraggingConnectionPropertyKey =DependencyProperty.RegisterReadOnly("IsDraggingConnection", typeof(bool), typeof(NodeView),new FrameworkPropertyMetadata(false));
 
-        public static readonly DependencyProperty IsDraggingConnectionProperty =
-            IsDraggingConnectionPropertyKey.DependencyProperty;
+        public static readonly DependencyProperty IsDraggingConnectionProperty =IsDraggingConnectionPropertyKey.DependencyProperty;
 
-        private static readonly DependencyPropertyKey IsNotDraggingConnectionPropertyKey =
-            DependencyProperty.RegisterReadOnly("IsNotDraggingConnection", typeof(bool), typeof(NodeView),
-                new FrameworkPropertyMetadata(true));
+        private static readonly DependencyPropertyKey IsNotDraggingConnectionPropertyKey =DependencyProperty.RegisterReadOnly("IsNotDraggingConnection", typeof(bool), typeof(NodeView),new FrameworkPropertyMetadata(true));
 
-        public static readonly DependencyProperty IsNotDraggingConnectionProperty =
-            IsNotDraggingConnectionPropertyKey.DependencyProperty;
+        public static readonly DependencyProperty IsNotDraggingConnectionProperty =IsNotDraggingConnectionPropertyKey.DependencyProperty;
 
-        public static readonly DependencyProperty EnableNodeDraggingProperty =
-            DependencyProperty.Register("EnableNodeDragging", typeof(bool), typeof(NodeView),
-                new FrameworkPropertyMetadata(true));
+        public static readonly DependencyProperty EnableNodeDraggingProperty =DependencyProperty.Register("EnableNodeDragging", typeof(bool), typeof(NodeView),new FrameworkPropertyMetadata(true));
 
-        private static readonly DependencyPropertyKey IsDraggingNodePropertyKey =
-            DependencyProperty.RegisterReadOnly("IsDraggingNode", typeof(bool), typeof(NodeView),
-                new FrameworkPropertyMetadata(false));
+        private static readonly DependencyPropertyKey IsDraggingNodePropertyKey =DependencyProperty.RegisterReadOnly("IsDraggingNode", typeof(bool), typeof(NodeView),new FrameworkPropertyMetadata(false));
 
-        public static readonly DependencyProperty IsDraggingNodeProperty =
-            IsDraggingNodePropertyKey.DependencyProperty;
+        public static readonly DependencyProperty IsDraggingNodeProperty =IsDraggingNodePropertyKey.DependencyProperty;
 
-        private static readonly DependencyPropertyKey IsNotDraggingNodePropertyKey =
-            DependencyProperty.RegisterReadOnly("IsNotDraggingNode", typeof(bool), typeof(NodeView),
-                new FrameworkPropertyMetadata(true));
+        private static readonly DependencyPropertyKey IsNotDraggingNodePropertyKey =DependencyProperty.RegisterReadOnly("IsNotDraggingNode", typeof(bool), typeof(NodeView),new FrameworkPropertyMetadata(true));
 
-        public static readonly DependencyProperty IsNotDraggingNodeProperty =
-            IsDraggingNodePropertyKey.DependencyProperty;
+        public static readonly DependencyProperty IsNotDraggingNodeProperty =IsDraggingNodePropertyKey.DependencyProperty;
 
-        private static readonly DependencyPropertyKey IsDraggingPropertyKey =
-            DependencyProperty.RegisterReadOnly("IsDragging", typeof(bool), typeof(NodeView),
-                new FrameworkPropertyMetadata(false));
+        private static readonly DependencyPropertyKey IsDraggingPropertyKey =DependencyProperty.RegisterReadOnly("IsDragging", typeof(bool), typeof(NodeView),new FrameworkPropertyMetadata(false));
 
         public static readonly DependencyProperty IsDraggingProperty = IsDraggingPropertyKey.DependencyProperty;
 
-        private static readonly DependencyPropertyKey IsNotDraggingPropertyKey =
-            DependencyProperty.RegisterReadOnly("IsNotDragging", typeof(bool), typeof(NodeView),
-                new FrameworkPropertyMetadata(true));
+        private static readonly DependencyPropertyKey IsNotDraggingPropertyKey =DependencyProperty.RegisterReadOnly("IsNotDragging", typeof(bool), typeof(NodeView),new FrameworkPropertyMetadata(true));
 
-        public static readonly DependencyProperty IsNotDraggingProperty =
-            IsNotDraggingPropertyKey.DependencyProperty;
+        public static readonly DependencyProperty IsNotDraggingProperty =IsNotDraggingPropertyKey.DependencyProperty;
 
-        public static readonly DependencyProperty NodeItemTemplateProperty =
-            DependencyProperty.Register("NodeItemTemplate", typeof(DataTemplate), typeof(NodeView));
+        public static readonly DependencyProperty NodeItemTemplateProperty =DependencyProperty.Register("NodeItemTemplate", typeof(DataTemplate), typeof(NodeView));
 
-        public static readonly DependencyProperty NodeItemTemplateSelectorProperty =
-            DependencyProperty.Register("NodeItemTemplateSelector", typeof(DataTemplateSelector),
-                typeof(NodeView));
+        public static readonly DependencyProperty NodeItemTemplateSelectorProperty =DependencyProperty.Register("NodeItemTemplateSelector", typeof(DataTemplateSelector),typeof(NodeView));
 
-        public static readonly DependencyProperty NodeItemContainerStyleProperty =
-            DependencyProperty.Register("NodeItemContainerStyle", typeof(Style), typeof(NodeView));
+        public static readonly DependencyProperty NodeItemContainerStyleProperty =DependencyProperty.Register("NodeItemContainerStyle", typeof(Style), typeof(NodeView));
 
-        public static readonly DependencyProperty ConnectionItemTemplateProperty =
-            DependencyProperty.Register("ConnectionItemTemplate", typeof(DataTemplate), typeof(NodeView));
+        public static readonly DependencyProperty ConnectionItemTemplateProperty =DependencyProperty.Register("ConnectionItemTemplate", typeof(DataTemplate), typeof(NodeView));
 
-        public static readonly DependencyProperty ConnectionItemTemplateSelectorProperty =
-            DependencyProperty.Register("ConnectionItemTemplateSelector", typeof(DataTemplateSelector),
-                typeof(NodeView));
+        public static readonly DependencyProperty ConnectionItemTemplateSelectorProperty =DependencyProperty.Register("ConnectionItemTemplateSelector", typeof(DataTemplateSelector),typeof(NodeView));
 
-        public static readonly DependencyProperty ConnectionItemContainerStyleProperty =
-            DependencyProperty.Register("ConnectionItemContainerStyle", typeof(Style), typeof(NodeView));
+        public static readonly DependencyProperty ConnectionItemContainerStyleProperty =DependencyProperty.Register("ConnectionItemContainerStyle", typeof(Style), typeof(NodeView));
 
-        public static readonly RoutedEvent NodeDragStartedEvent =
-            EventManager.RegisterRoutedEvent("NodeDragStarted", RoutingStrategy.Bubble,
-                typeof(NodeDragStartedEventHandler), typeof(NodeView));
+        public static readonly RoutedEvent NodeDragStartedEvent =EventManager.RegisterRoutedEvent("NodeDragStarted", RoutingStrategy.Bubble,typeof(NodeDragStartedEventHandler), typeof(NodeView));
 
-        public static readonly RoutedEvent NodeDraggingEvent =
-            EventManager.RegisterRoutedEvent("NodeDragging", RoutingStrategy.Bubble,
-                typeof(NodeDraggingEventHandler), typeof(NodeView));
+        public static readonly RoutedEvent NodeDraggingEvent =EventManager.RegisterRoutedEvent("NodeDragging", RoutingStrategy.Bubble,typeof(NodeDraggingEventHandler), typeof(NodeView));
 
-        public static readonly RoutedEvent NodeDragCompletedEvent =
-            EventManager.RegisterRoutedEvent("NodeDragCompleted", RoutingStrategy.Bubble,
-                typeof(NodeDragCompletedEventHandler), typeof(NodeView));
+        public static readonly RoutedEvent NodeDragCompletedEvent =EventManager.RegisterRoutedEvent("NodeDragCompleted", RoutingStrategy.Bubble,typeof(NodeDragCompletedEventHandler), typeof(NodeView));
 
-        public static readonly RoutedEvent ConnectionDragStartedEvent =
-            EventManager.RegisterRoutedEvent("ConnectionDragStarted", RoutingStrategy.Bubble,
-                typeof(ConnectionDragStartedEventHandler), typeof(NodeView));
+        public static readonly RoutedEvent ConnectionDragStartedEvent =EventManager.RegisterRoutedEvent("ConnectionDragStarted", RoutingStrategy.Bubble,typeof(ConnectionDragStartedEventHandler), typeof(NodeView));
 
-        public static readonly RoutedEvent QueryConnectionFeedbackEvent =
-            EventManager.RegisterRoutedEvent("QueryConnectionFeedback", RoutingStrategy.Bubble,
-                typeof(QueryConnectionFeedbackEventHandler), typeof(NodeView));
+        public static readonly RoutedEvent QueryConnectionFeedbackEvent =EventManager.RegisterRoutedEvent("QueryConnectionFeedback", RoutingStrategy.Bubble,typeof(QueryConnectionFeedbackEventHandler), typeof(NodeView));
 
-        public static readonly RoutedEvent ConnectionDraggingEvent =
-            EventManager.RegisterRoutedEvent("ConnectionDragging", RoutingStrategy.Bubble,
-                typeof(ConnectionDraggingEventHandler), typeof(NodeView));
+        public static readonly RoutedEvent ConnectionDraggingEvent =EventManager.RegisterRoutedEvent("ConnectionDragging", RoutingStrategy.Bubble,typeof(ConnectionDraggingEventHandler), typeof(NodeView));
 
-        public static readonly RoutedEvent ConnectionDragCompletedEvent =
-            EventManager.RegisterRoutedEvent("ConnectionDragCompleted", RoutingStrategy.Bubble,
-                typeof(ConnectionDragCompletedEventHandler), typeof(NodeView));
+        public static readonly RoutedEvent ConnectionDragCompletedEvent =EventManager.RegisterRoutedEvent("ConnectionDragCompleted", RoutingStrategy.Bubble,typeof(ConnectionDragCompletedEventHandler), typeof(NodeView));
 
         public static readonly RoutedCommand SelectAllCommand;
         public static readonly RoutedCommand SelectNoneCommand;

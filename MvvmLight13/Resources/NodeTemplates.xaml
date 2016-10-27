@@ -112,10 +112,10 @@
                         <Grid>
 
                             <!-- Control that presents the nodes. -->
-                            <controls:NodeItemsControl x:Name="PART_NodeItemsControl" ItemsSource="{TemplateBinding Nodes}" SelectionMode="Extended" Style="{StaticResource noScrollViewerListBoxStyle}" ItemTemplate="{TemplateBinding NodeItemTemplate}" ItemTemplateSelector="{TemplateBinding NodeItemTemplateSelector}" ItemContainerStyle="{TemplateBinding NodeItemContainerStyle}" />
+                            <controls:NodeItemsControl x:Name="PART_NodeItemsControl" ItemsSource="{TemplateBinding Nodes}" SelectionMode="Extended" Style="{StaticResource noScrollViewerListBoxStyle}" ItemTemplate="{TemplateBinding NodeItemTemplate}" ItemTemplateSelector="{TemplateBinding NodeItemTemplateSelector}" ItemContainerStyle="{TemplateBinding NodeItemContainerStyle}"  ClipToBounds="True"/>
 
                             <!-- Control that presents the connections between nodes. -->
-                            <ItemsControl x:Name="PART_ConnectionItemsControl" ItemsSource="{TemplateBinding Connections}" ItemTemplate="{TemplateBinding ConnectionItemTemplate}" ItemTemplateSelector="{TemplateBinding ConnectionItemTemplateSelector}" ItemContainerStyle="{TemplateBinding ConnectionItemContainerStyle}">
+                            <ItemsControl x:Name="PART_ConnectionItemsControl" ItemsSource="{TemplateBinding Connections}" ItemTemplate="{TemplateBinding ConnectionItemTemplate}" ItemTemplateSelector="{TemplateBinding ConnectionItemTemplateSelector}" ItemContainerStyle="{TemplateBinding ConnectionItemContainerStyle}" ClipToBounds="True">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <!-- Connections are presented in a Canvas. -->
@@ -127,7 +127,7 @@
                             <!--
                             This Canvas and Border are used as a very simple way to render a drag selection rectangle.
                             -->
-                            <Canvas x:Name="PART_DragSelectionCanvas" Visibility="Collapsed">
+                            <Canvas x:Name="PART_DragSelectionCanvas" Visibility="Collapsed" ClipToBounds="True">
                                 <Border x:Name="PART_DragSelectionBorder" BorderBrush="Blue" BorderThickness="1" Background="LightBlue" CornerRadius="1" Opacity="0.5" />
                             </Canvas>
                         </Grid>
@@ -169,7 +169,7 @@
                 <PathGeometry x:Key="chevHeadGeometry" Figures="{utility:MultiBinder {Binding Source={StaticResource ChevAngle}},
                                                                                 {Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType={x:Type Canvas}}},
                                                                                 {Binding Path=ActualHeight, RelativeSource={RelativeSource AncestorType={x:Type Canvas}}},
-                                                                                {StaticResource ChevHeadConverter}}" />
+                                                                                {StaticResource ChevBodyConverter}}" />
 
                 <PathGeometry x:Key="chevTailGeometry" Figures="{utility:MultiBinder {Binding Source={StaticResource ChevAngle}},
                                                                                 {Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType={x:Type Canvas}} },
@@ -189,7 +189,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="chevTailTemplate">
-        <Canvas x:Name="chevCanvas" Background="Transparent">
+        <Canvas x:Name="chevCanvas" Background="Transparent" Visibility="{Binding Path=Highlighted, Converter={StaticResource BooleanToVisibilityConverter}}" >
             <Canvas.Resources>
                 <RectangleGeometry x:Key="chevBody">
                     <RectangleGeometry.Rect>
@@ -204,7 +204,7 @@
                                                                                 {Binding Path=ActualHeight, RelativeSource={RelativeSource AncestorType={x:Type Canvas}}},
                                                                                 {StaticResource ChevTailConverter}}" />
             </Canvas.Resources>
-            <Path Fill="{StaticResource nodeFillBrush}" Stroke="Transparent">
+            <Path Fill="LawnGreen" Stroke="Transparent">
                 <Path.Data>
                     <CombinedGeometry GeometryCombineMode="Intersect" Geometry1="{StaticResource chevBody}">
                         <CombinedGeometry.Geometry2>
@@ -220,7 +220,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="chevHeadTemplate">
-        <Canvas x:Name="chevCanvas" Background="Transparent">
+        <Canvas x:Name="chevCanvas" Background="Transparent" Visibility="{Binding Path=Highlighted, Mode=TwoWay, Converter={StaticResource BooleanToVisibilityConverter}}" >
             <Canvas.Resources>
                 <RectangleGeometry x:Key="chevBody">
                     <RectangleGeometry.Rect>
@@ -235,7 +235,7 @@
                                                                                 {Binding Path=ActualHeight, RelativeSource={RelativeSource AncestorType={x:Type Canvas}}},
                                                                                 {StaticResource ChevHeadConverter}}" />
             </Canvas.Resources>
-            <Path Fill="{StaticResource nodeFillBrush}" Stroke="Transparent">
+            <Path Fill="LawnGreen" Stroke="Transparent">
                 <Path.Data>
                     <CombinedGeometry GeometryCombineMode="Intersect" Geometry1="{StaticResource chevBody}">
                         <CombinedGeometry.Geometry2>
@@ -258,20 +258,29 @@
 
         <!--  The margin has been selected so that the selection rect nicely covers the entire node.  -->
 
-        <Grid Margin="10,6,10,6">
+        <Grid Margin="10,6,10,6" x:Name="xgrid">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition />
             </Grid.RowDefinitions>
             <Grid x:Name="chevgrid" Grid.Row="0" MinWidth="180" MinHeight="60" >
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
-                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <ContentControl Grid.Column="0" Focusable="False" HorizontalAlignment="Stretch" Grid.ColumnSpan="3" ContentTemplate="{StaticResource chevTemplate}" />
-                <ContentControl Grid.Column="0" Focusable="False" HorizontalAlignment="Stretch" Grid.ColumnSpan="3" ContentTemplate="{StaticResource chevTailTemplate}" Content="{Binding Path=InputConnector}" Visibility="Hidden" />
-                <ContentControl Grid.Column="0" Focusable="False" HorizontalAlignment="Stretch" Grid.ColumnSpan="3" ContentTemplate="{StaticResource chevHeadTemplate}" Content="{Binding Path=OutputConnector}" Visibility="Hidden" />
+                <ContentControl x:Name="body" Grid.Column="0" Focusable="False" HorizontalAlignment="Stretch" ContentTemplate="{StaticResource chevTemplate}" />
+                <controls:Tail Grid.Column="0"
+                               ChevAngle="{Binding Source={StaticResource ChevAngle}}" 
+                               ChevHeight="{Binding Path=ActualHeight, ElementName=chevgrid}"
+                               ChevWidth="{Binding Path=ActualWidth, ElementName=chevgrid}"
+                               DataContext="{Binding Path=InputConnector}"
+                               Visibility="{Binding Path=Highlighted, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                <controls:Head Grid.Column="0" HorizontalAlignment="Right"
+                               ChevAngle="{Binding Source={StaticResource ChevAngle}}" 
+                               ChevHeight="{Binding Path=ActualHeight, ElementName=chevgrid}" 
+                               ChevWidth="{Binding Path=ActualWidth, ElementName=chevgrid}" 
+                               DataContext="{Binding Path=OutputConnector}" 
+                               Visibility="{Binding Path=Highlighted,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
             </Grid>
             <Grid x:Name="dataContentGrid" Grid.Row="1" MinHeight="120" Margin="15,0,15,5" Background="White" Focusable="False">
                 <Border BorderBrush="Black" BorderThickness="2,1,2,2"/>
