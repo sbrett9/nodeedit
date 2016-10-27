@@ -1,0 +1,98 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ResourceDictionary.MergedDictionaries>
+
+        <ResourceDictionary Source="pack://application:,,,/Resources/Converters.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/Resources/ZoomTemplates.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/Resources/NodeTemplates.xaml" />
+        <ResourceDictionary>
+            <DropShadowEffect x:Key="TextEffect1" BlurRadius="0" Direction="270" Opacity="0.6" ShadowDepth="1" Color="#FFFFFFFF" />
+
+            <DropShadowEffect x:Key="TextEffect2" BlurRadius="1" Direction="-270" ShadowDepth="1" Color="#FFBEBEBE" />
+
+            <SolidColorBrush x:Key="ChevronForegroundInactive" Color="#FF8f969f" />
+            <SolidColorBrush x:Key="ChevronBorderSouth" Color="#FF6b7279" />
+            <LinearGradientBrush x:Key="ChevronBackgroundActive" StartPoint="0.5,0" EndPoint="0.5,1">
+                <GradientStop Offset="1" Color="#FF2970b3" />
+                <GradientStop Color="#FF5aa8d1" />
+            </LinearGradientBrush>
+            <SolidColorBrush x:Key="ChevronForegroundActive" Color="#FFFFFFFF" />
+
+            <LinearGradientBrush x:Key="ChevronBackgroundInactive" StartPoint="0.5,0" EndPoint="0.5,1">
+                <GradientStop Offset="1" Color="#FFcbcdd0" />
+                <GradientStop Color="#FFe2e4e7" />
+            </LinearGradientBrush>
+
+            <Style x:Key="ChevronTailStyle" TargetType="{x:Type Polygon}">
+                <Setter Property="Points" Value="0,0 15,0 15,50 0,50 11,25 0,0" />
+            </Style>
+
+            <Style x:Key="ChevronHeadStyle" TargetType="{x:Type Polygon}">
+                <Setter Property="Points" Value="0,0 11,25 0,50 0,0" />
+            </Style>
+
+            <ControlTemplate x:Key="ChevronControlTemplate" TargetType="Button">
+                <Grid Margin="0,0,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Polygon x:Name="Tail" Fill="{StaticResource ChevronBackgroundInactive}" Style="{StaticResource ChevronTailStyle}" />
+                    <!--  North Border  -->
+                    <Path x:Name="NorthBorder" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" VerticalAlignment="Top" Data="M0,0 L0,0" Opacity="0.6" Stretch="Fill" Stroke="#FFFFFFFF" StrokeEndLineCap="Square" StrokeStartLineCap="Square" StrokeThickness="1" />
+
+                    <!--  South Border  -->
+                    <Path x:Name="SouthBorder" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Data="M0,0 L0,0" Opacity="1.0" Stretch="Fill" Stroke="{StaticResource ChevronBorderSouth}" StrokeEndLineCap="Square" StrokeStartLineCap="Square" StrokeThickness="1" />
+                    <Grid Grid.Column="1">
+                        <Rectangle x:Name="TextArea" Fill="{StaticResource ChevronBackgroundInactive}" />
+                        <TextBlock x:Name="ContentTextBlock" Margin="10,0,10,0" VerticalAlignment="Center" Effect="{StaticResource TextEffect1}" Text="{TemplateBinding Content}" TextAlignment="Center" TextTrimming="None" />
+                    </Grid>
+                    <Polygon x:Name="Head" Grid.Column="2" Fill="{StaticResource ChevronBackgroundInactive}" Style="{StaticResource ChevronHeadStyle}" />
+                </Grid>
+                <ControlTemplate.Triggers>
+                    <!--<Trigger Property="IsCurrentlyActive" Value="true">
+                <Setter TargetName="Tail" Property="Fill" Value="{StaticResource ChevronBackgroundActive}" />
+                <Setter TargetName="Head" Property="Fill" Value="{StaticResource ChevronBackgroundActive}" />
+                <Setter TargetName="TextArea" Property="Fill" Value="{StaticResource ChevronBackgroundActive}" />
+                <Setter Property="Foreground" Value="{StaticResource ChevronForegroundActive}" />
+                <Setter Property="Effect" Value="{StaticResource TextEffect2}" TargetName="ContentTextBlock" />
+            </Trigger>-->
+                    <MultiTrigger>
+                        <MultiTrigger.Conditions>
+                            <Condition Property="IsMouseOver" Value="True" />
+                            <Condition Property="IsEnabled" Value="True" />
+                        </MultiTrigger.Conditions>
+                        <MultiTrigger.Setters>
+                            <Setter Property="Cursor" Value="Hand" />
+                        </MultiTrigger.Setters>
+                    </MultiTrigger>
+                    <Trigger Property="IsEnabled" Value="True" />
+                    <!--<Trigger Property="IsFirstChild" Value="True">
+                <Setter TargetName="Tail" Property="Visibility" Value="Hidden" />
+                <Setter TargetName="NorthBorder" Property="Margin" Value="0" />
+                <Setter TargetName="SouthBorder" Property="Margin" Value="0" />
+                <Setter TargetName="ContentTextBlock" Property="Margin" Value="5,0,15,0" />
+            </Trigger>-->
+                </ControlTemplate.Triggers>
+            </ControlTemplate>
+
+
+            <Style x:Key="AnotherChevronStyle" TargetType="{x:Type Button}">
+                <Setter Property="SnapsToDevicePixels" Value="True" />
+                <Setter Property="UseLayoutRounding" Value="True" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Foreground" Value="{StaticResource ChevronForegroundInactive}" />
+                <Setter Property="FontWeight" Value="Bold" />
+                <Setter Property="FontFamily" Value="HelveticaNeue-Bold" />
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Template" Value="{StaticResource ChevronControlTemplate}" />
+            </Style>
+        </ResourceDictionary>
+    </ResourceDictionary.MergedDictionaries>
+
+</ResourceDictionary>

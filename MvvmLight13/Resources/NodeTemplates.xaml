@@ -1,0 +1,281 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:controls="clr-namespace:MvvmLight13.Controls" xmlns:local="clr-namespace:MvvmLight13.Resources" xmlns:viewModel="clr-namespace:MvvmLight13.ViewModel" xmlns:controls1="http://metro.mahapps.com/winfx/xaml/controls" xmlns:qc="http://QuickConverter.CodePlex.com/" xmlns:system="clr-namespace:System;assembly=mscorlib" xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:utility="clr-namespace:MvvmLight13.Utility">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/Resources/Converters.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/Resources/Brushes.xaml" />
+        <ResourceDictionary>
+
+            <system:Double x:Key="ChevAngle">132.5</system:Double>
+
+
+            <!-- Default style and control-template for 'NodeItem'. -->
+            <Style x:Key="defaultNodeItem" TargetType="{x:Type controls:NodeItem}">
+
+                <!-- Data-bind the parent NetworkView. -->
+                <Setter Property="ParentOperationView" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:NodeView}}, Path=.}" />
+
+                <!-- Set the position of the node within the canvas. -->
+                <Setter Property="Canvas.Left" Value="{Binding X, RelativeSource={RelativeSource Self}, Mode=TwoWay}" />
+                <Setter Property="Canvas.Top" Value="{Binding Y, RelativeSource={RelativeSource Self}, Mode=TwoWay}" />
+
+                <!-- Set the z-order of the node within the canvas. -->
+                <Setter Property="Canvas.ZIndex" Value="{Binding ZIndex, RelativeSource={RelativeSource Self}, Mode=TwoWay}" />
+
+                <!-- Set defaults for background and border. -->
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderBrush" Value="Transparent" />
+                <Setter Property="BorderThickness" Value="1" />
+
+                <!-- The control-template for the node. -->
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type controls:NodeItem}">
+                            <Grid>
+                                <Border x:Name="selectionBorder" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Margin="{TemplateBinding Margin}" Padding="{TemplateBinding Padding}" CornerRadius="2">
+                                    <ContentPresenter />
+                                </Border>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter TargetName="selectionBorder" Property="BorderBrush" Value="{StaticResource selectionBorderColor}" />
+                                    <Setter TargetName="selectionBorder" Property="Background" Value="{StaticResource selectionBorderBackgroundColor}" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+
+        </ResourceDictionary>
+    </ResourceDictionary.MergedDictionaries>
+
+
+    <Style x:Key="tailStyle" TargetType="{x:Type controls:ConnectorItem}">
+        <!-- Data-binding for the connector hotspot. ConnectorItem automatically computes its center points and assings this value to the 'Hotspot' property.  This data-binding then 'pushes' the value into the application view-model. -->
+        <Setter Property="Hotspot" Value="{Binding Path=Hotspot, Mode=OneWayToSource}" />
+
+        <!-- The visual template. -->
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:ConnectorItem}">
+                    <!-- The visual for the connector. -->
+                    <Ellipse Stroke="{StaticResource nodeBorderBrush}" Fill="{StaticResource connectorBackgroundBrush}" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="headStyle" TargetType="{x:Type controls:ConnectorItem}">
+        <!-- Data-binding for the connector hotspot. ConnectorItem automatically computes its center points and assings this value to the 'Hotspot' property.  This data-binding then 'pushes' the value into the application view-model. -->
+        <Setter Property="Hotspot" Value="{Binding Path=Hotspot, Mode=OneWayToSource}" />
+
+        <!-- The visual template. -->
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:ConnectorItem}">
+                    <!-- The visual for the connector. -->
+                    <Ellipse Stroke="{StaticResource nodeBorderBrush}" Fill="{StaticResource connectorBackgroundBrush}" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--    Define a style for 'NodeItem'. Binds 'X' and 'Y' in the view-model (the 'NodeViewModel' class) to 'X' and 'Y' in the NodeItem class. This sets the position of the node within the Canvas.   -->
+    <Style TargetType="{x:Type controls:NodeItem}" BasedOn="{StaticResource defaultNodeItem}">
+        <Setter Property="X" Value="{Binding Path=X}" />
+        <Setter Property="Y" Value="{Binding Path=Y}" />
+        <Setter Property="ZIndex" Value="{Binding Path=ZIndex}" />
+        <Setter Property="IsSelected" Value="{Binding Path=IsSelected}" />
+    </Style>
+
+    <!--Override the style of the ListBox to remove the ScrollViewer. All we want is ListBox logic but based on a Canvas. -->
+    <Style x:Key="noScrollViewerListBoxStyle" TargetType="ListBox">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBox">
+                    <!-- The ListBoxItems are presented in a Canvas. 'IsItemsHost' is set to 'True' so that the ListBox uses the Canvas as the container for its items. -->
+                    <Canvas IsItemsHost="True" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Default style and visual template for 'NetworkView'. -->
+    <Style TargetType="{x:Type controls:NodeView}">
+
+        <!-- The visual template. -->
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:NodeView}">
+                    <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
+                        <Grid>
+
+                            <!-- Control that presents the nodes. -->
+                            <controls:NodeItemsControl x:Name="PART_NodeItemsControl" ItemsSource="{TemplateBinding Nodes}" SelectionMode="Extended" Style="{StaticResource noScrollViewerListBoxStyle}" ItemTemplate="{TemplateBinding NodeItemTemplate}" ItemTemplateSelector="{TemplateBinding NodeItemTemplateSelector}" ItemContainerStyle="{TemplateBinding NodeItemContainerStyle}" />
+
+                            <!-- Control that presents the connections between nodes. -->
+                            <ItemsControl x:Name="PART_ConnectionItemsControl" ItemsSource="{TemplateBinding Connections}" ItemTemplate="{TemplateBinding ConnectionItemTemplate}" ItemTemplateSelector="{TemplateBinding ConnectionItemTemplateSelector}" ItemContainerStyle="{TemplateBinding ConnectionItemContainerStyle}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <!-- Connections are presented in a Canvas. -->
+                                        <Canvas />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                            </ItemsControl>
+
+                            <!--
+                            This Canvas and Border are used as a very simple way to render a drag selection rectangle.
+                            -->
+                            <Canvas x:Name="PART_DragSelectionCanvas" Visibility="Collapsed">
+                                <Border x:Name="PART_DragSelectionBorder" BorderBrush="Blue" BorderThickness="1" Background="LightBlue" CornerRadius="1" Opacity="0.5" />
+                            </Canvas>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+    <!--     A data-template that defines the UI for input connectors.    -->
+    <DataTemplate x:Key="inputConnectorTemplate">
+        <Grid>
+            <!-- The 'ConnectorItem' or anchor point for the connector. -->
+            <controls:ConnectorItem Width="15" Height="15" Cursor="Hand" Style="{StaticResource tailStyle}" />
+        </Grid>
+    </DataTemplate>
+
+    <!--     A data-template that defines the UI for output connectors.    -->
+    <DataTemplate x:Key="outputConnectorTemplate">
+        <Grid>
+            <controls:ConnectorItem Width="15" Height="15" Cursor="Hand" Style="{StaticResource headStyle}" />
+        </Grid>
+    </DataTemplate>
+
+
+    <DataTemplate x:Key="chevTemplate">
+        <Canvas x:Name="chevCanvas" Background="Transparent">
+            <Canvas.Resources>
+                <RectangleGeometry x:Key="chevBody">
+                    <RectangleGeometry.Rect>
+                        <MultiBinding Converter="{StaticResource RectConverter}">
+                            <Binding Path="ActualWidth" RelativeSource="{RelativeSource AncestorType={x:Type Canvas}}" />
+                            <Binding Path="ActualHeight" RelativeSource="{RelativeSource AncestorType={x:Type Canvas}}" />
+                        </MultiBinding>
+                    </RectangleGeometry.Rect>
+                </RectangleGeometry>
+
+                <PathGeometry x:Key="chevHeadGeometry" Figures="{utility:MultiBinder {Binding Source={StaticResource ChevAngle}},
+                                                                                {Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType={x:Type Canvas}}},
+                                                                                {Binding Path=ActualHeight, RelativeSource={RelativeSource AncestorType={x:Type Canvas}}},
+                                                                                {StaticResource ChevHeadConverter}}" />
+
+                <PathGeometry x:Key="chevTailGeometry" Figures="{utility:MultiBinder {Binding Source={StaticResource ChevAngle}},
+                                                                                {Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType={x:Type Canvas}} },
+                                                                                {Binding Path=ActualHeight, RelativeSource={RelativeSource AncestorType={x:Type Canvas}}},
+                                                                                {StaticResource ChevTailConverter}}" />
+            </Canvas.Resources>
+            <Path Fill="{StaticResource nodeFillBrush}">
+                <Path.Data>
+                    <CombinedGeometry GeometryCombineMode="Exclude" Geometry1="{StaticResource chevBody}">
+                        <CombinedGeometry.Geometry2>
+                            <CombinedGeometry GeometryCombineMode="Union" Geometry1="{DynamicResource chevHeadGeometry}" Geometry2="{DynamicResource chevTailGeometry}" />
+                        </CombinedGeometry.Geometry2>
+                    </CombinedGeometry>
+                </Path.Data>
+            </Path>
+        </Canvas>
+    </DataTemplate>
+
+    <DataTemplate x:Key="chevTailTemplate">
+        <Canvas x:Name="chevCanvas" Background="Transparent">
+            <Canvas.Resources>
+                <RectangleGeometry x:Key="chevBody">
+                    <RectangleGeometry.Rect>
+                        <MultiBinding Converter="{StaticResource RectConverter}">
+                            <Binding Path="ActualWidth" RelativeSource="{RelativeSource AncestorType={x:Type Canvas}}" />
+                            <Binding Path="ActualHeight" RelativeSource="{RelativeSource AncestorType={x:Type Canvas}}" />
+                        </MultiBinding>
+                    </RectangleGeometry.Rect>
+                </RectangleGeometry>
+                <PathGeometry x:Key="chevTailGeometry" Figures="{utility:MultiBinder {Binding Source={StaticResource ChevAngle}},
+                                                                                {Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType={x:Type Canvas}} },
+                                                                                {Binding Path=ActualHeight, RelativeSource={RelativeSource AncestorType={x:Type Canvas}}},
+                                                                                {StaticResource ChevTailConverter}}" />
+            </Canvas.Resources>
+            <Path Fill="{StaticResource nodeFillBrush}" Stroke="Transparent">
+                <Path.Data>
+                    <CombinedGeometry GeometryCombineMode="Intersect" Geometry1="{StaticResource chevBody}">
+                        <CombinedGeometry.Geometry2>
+                            <CombinedGeometry Geometry1="{DynamicResource chevTailGeometry}" />
+                        </CombinedGeometry.Geometry2>
+                    </CombinedGeometry>
+                </Path.Data>
+            </Path>
+            <Canvas.Effect>
+                <DropShadowEffect ShadowDepth="3" Direction="0" BlurRadius="3" Opacity="0.2" Color="White" />
+            </Canvas.Effect>
+        </Canvas>
+    </DataTemplate>
+
+    <DataTemplate x:Key="chevHeadTemplate">
+        <Canvas x:Name="chevCanvas" Background="Transparent">
+            <Canvas.Resources>
+                <RectangleGeometry x:Key="chevBody">
+                    <RectangleGeometry.Rect>
+                        <MultiBinding Converter="{StaticResource RectConverter}">
+                            <Binding Path="ActualWidth" RelativeSource="{RelativeSource AncestorType={x:Type Canvas}}" />
+                            <Binding Path="ActualHeight" RelativeSource="{RelativeSource AncestorType={x:Type Canvas}}" />
+                        </MultiBinding>
+                    </RectangleGeometry.Rect>
+                </RectangleGeometry>
+                <PathGeometry x:Key="chevHeadGeometry" Figures="{utility:MultiBinder {Binding Source={StaticResource ChevAngle}},
+                                                                                {Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType={x:Type Canvas}}},
+                                                                                {Binding Path=ActualHeight, RelativeSource={RelativeSource AncestorType={x:Type Canvas}}},
+                                                                                {StaticResource ChevHeadConverter}}" />
+            </Canvas.Resources>
+            <Path Fill="{StaticResource nodeFillBrush}" Stroke="Transparent">
+                <Path.Data>
+                    <CombinedGeometry GeometryCombineMode="Intersect" Geometry1="{StaticResource chevBody}">
+                        <CombinedGeometry.Geometry2>
+                            <CombinedGeometry Geometry1="{DynamicResource chevHeadGeometry}" />
+                        </CombinedGeometry.Geometry2>
+                    </CombinedGeometry>
+                </Path.Data>
+            </Path>
+            <Canvas.Effect>
+                <DropShadowEffect ShadowDepth="3" Direction="180" BlurRadius="3" Opacity="0.2" Color="White" />
+            </Canvas.Effect>
+        </Canvas>
+    </DataTemplate>
+
+
+
+
+    <!--  Define a data-template for the 'NodeViewModel' class.  -->
+    <DataTemplate DataType="{x:Type viewModel:AspirateOperationViewModel}">
+
+        <!--  The margin has been selected so that the selection rect nicely covers the entire node.  -->
+
+        <Grid Margin="10,6,10,6">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid x:Name="chevgrid" Grid.Row="0" MinWidth="180" MinHeight="60" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <ContentControl Grid.Column="0" Focusable="False" HorizontalAlignment="Stretch" Grid.ColumnSpan="3" ContentTemplate="{StaticResource chevTemplate}" />
+                <ContentControl Grid.Column="0" Focusable="False" HorizontalAlignment="Stretch" Grid.ColumnSpan="3" ContentTemplate="{StaticResource chevTailTemplate}" Content="{Binding Path=InputConnector}" Visibility="Hidden" />
+                <ContentControl Grid.Column="0" Focusable="False" HorizontalAlignment="Stretch" Grid.ColumnSpan="3" ContentTemplate="{StaticResource chevHeadTemplate}" Content="{Binding Path=OutputConnector}" Visibility="Hidden" />
+            </Grid>
+            <Grid x:Name="dataContentGrid" Grid.Row="1" MinHeight="120" Margin="15,0,15,5" Background="White" Focusable="False">
+                <Border BorderBrush="Black" BorderThickness="2,1,2,2"/>
+            </Grid>
+        </Grid>
+    </DataTemplate>
+</ResourceDictionary>
