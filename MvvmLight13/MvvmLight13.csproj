@@ -89,69 +89,65 @@
     </ApplicationDefinition>
     <Compile Include="Controls\AdornedControl.cs" />
     <Compile Include="Controls\AdornerEventArgs.cs" />
-    <Compile Include="Controls\ConnectionDragCompletedEventArgs.cs" />
-    <Compile Include="Controls\ConnectionDragCompletedEventHandler.cs" />
-    <Compile Include="Controls\ConnectionDragEventArgs.cs" />
-    <Compile Include="Controls\ConnectionDraggingEventArgs.cs" />
-    <Compile Include="Controls\ConnectionDraggingEventHandler.cs" />
-    <Compile Include="Controls\ConnectionDragStartedEventArgs.cs" />
-    <Compile Include="Controls\ConnectionDragStartedEventHandler.cs" />
-    <Compile Include="Controls\ConnectorItem.cs" />
-    <Compile Include="Controls\ConnectorItemDragCompletedEventArgs.cs" />
-    <Compile Include="Controls\ConnectorItemDragCompletedEventHandler.cs" />
-    <Compile Include="Controls\ConnectorItemDraggingEventArgs.cs" />
-    <Compile Include="Controls\ConnectorItemDraggingEventHandler.cs" />
-    <Compile Include="Controls\ConnectorItemDragStartedEventArgs.cs" />
-    <Compile Include="Controls\ConnectorItemDragStartedEventHandler.cs" />
+    <Compile Include="Controls\Body.xaml.cs">
+      <DependentUpon>Body.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Edge.cs" />
+    <Compile Include="Events\Drag\Edge\EdgeDragCompleted\EdgeDragCompletedEventArgs.cs" />
+    <Compile Include="Events\Drag\Edge\EdgeDragCompleted\EdgeDragCompletedEventHandler.cs" />
+    <Compile Include="Events\Drag\Edge\EdgeDragging\EdgeDraggingEventArgs.cs" />
+    <Compile Include="Events\Drag\Edge\EdgeDragging\EdgeDraggingEventHandler.cs" />
     <Compile Include="Controls\Head.xaml.cs">
       <DependentUpon>Head.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\NodeDragCompletedEventArgs.cs" />
-    <Compile Include="Controls\NodeDragCompletedEventHandler.cs" />
-    <Compile Include="Controls\NodeDragEventArgs.cs" />
-    <Compile Include="Controls\NodeDragEventHandler.cs" />
-    <Compile Include="Controls\NodeDragEvents.cs" />
-    <Compile Include="Controls\NodeDraggingEventArgs.cs" />
-    <Compile Include="Controls\NodeDraggingEventHandler.cs" />
-    <Compile Include="Controls\NodeDragStartedEventHandler.cs" />
-    <Compile Include="Controls\NodeItem.cs" />
-    <Compile Include="Controls\NodeItemsControl.cs" />
-    <Compile Include="Controls\NodeView_ConnectionDragging.cs" />
+    <Compile Include="Controls\NodeView_NodeInserting.cs" />
+    <Compile Include="Events\Drag\Edge\EdgeDragStarted\EdgeDragStartedEventArgs.cs" />
+    <Compile Include="Events\Drag\Edge\EdgeDragStarted\EdgeDragStartedEventHandler.cs" />
+    <Compile Include="Events\Insert\NodeInsertCompleted\NodeInsertCompletedEventArgs.cs" />
+    <Compile Include="Events\Insert\NodeInsertCompleted\NodeInsertCompletedEventHandler.cs" />
+    <Compile Include="Events\Insert\NodeInsertEventArgs.cs" />
+    <Compile Include="Events\Insert\NodeInserting\NodeInsertingEventArgs.cs" />
+    <Compile Include="Events\Insert\NodeInserting\NodeInsertingEventHandler.cs" />
+    <Compile Include="Events\Insert\NodeInsertStarted\NodeInsertStartedEventArgs.cs" />
+    <Compile Include="Events\Drag\Node\NodeDragCompleted\NodeDragCompletedEventArgs.cs" />
+    <Compile Include="Events\Drag\Node\NodeDragCompleted\NodeDragCompletedEventHandler.cs" />
+    <Compile Include="Events\Drag\Node\NodeDrag\NodeDragEventArgs.cs" />
+    <Compile Include="Events\Drag\Node\NodeDrag\NodeDragEventHandler.cs" />
+    <Compile Include="Events\Drag\Node\NodeDragStarted\NodeDragStartedEventArgs.cs" />
+    <Compile Include="Events\Drag\Node\NodeDragging\NodeDraggingEventArgs.cs" />
+    <Compile Include="Events\Drag\Node\NodeDragging\NodeDraggingEventHandler.cs" />
+    <Compile Include="Events\Drag\Node\NodeDragStarted\NodeDragStartedEventHandler.cs" />
+    <Compile Include="Controls\Node.cs" />
+    <Compile Include="Controls\NodesControl.cs" />
     <Compile Include="Controls\NodeView_DragSelection.cs" />
     <Compile Include="Controls\NodeView_NodeDragging.cs" />
-    <Compile Include="Controls\Node.xaml.cs">
-      <DependentUpon>Node.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\NodeView.cs" />
-    <Compile Include="Controls\QueryConnectionFeedbackEventArgs.cs" />
-    <Compile Include="Controls\QueryConnectionFeedbackEventHandler.cs" />
     <Compile Include="Controls\Tail.xaml.cs">
       <DependentUpon>Tail.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\BooleanToHighlightConverter.cs" />
     <Compile Include="Converters\ChevBodyConverter.cs" />
     <Compile Include="Converters\ChevHeadConverter.cs" />
+    <Compile Include="Converters\ChevHeadXPosConverter.cs" />
     <Compile Include="Converters\ChevTailConverter.cs" />
     <Compile Include="Converters\EqualityToBooleanConverter.cs" />
     <Compile Include="Converters\RectConverter.cs" />
     <Compile Include="Design\DesignTimeDataService.cs" />
     <Compile Include="Design\DesignOperation.cs" />
-    <Compile Include="Model\ConnectorType.cs" />
+    <Compile Include="Events\Insert\NodeInsertStarted\NodeInsertStartedEventHandler.cs" />
     <Compile Include="Model\Operation.cs" />
     <Compile Include="Model\RuntimeDataService.cs" />
     <Compile Include="Selectors\OperationItemTemplateSelector.cs" />
     <Compile Include="Utility\AdornerPlacement.cs" />
-    <Compile Include="Utility\CollectionItemsChangedEventArgs.cs" />
     <Compile Include="Utility\FrameworkElementAdorner.cs" />
-    <Compile Include="Utility\ImpObservableCollection.cs" />
     <Compile Include="Utility\MultiBinder.cs" />
     <Compile Include="Utility\PathGeometryMultiBinder.cs" />
     <Compile Include="Utility\Utilities.cs" />
-    <Compile Include="ViewModel\AspirateOperationViewModel.cs" />
-    <Compile Include="ViewModel\ConnectionViewModel.cs" />
-    <Compile Include="ViewModel\ConnectorViewModel.cs" />
+    <Compile Include="ViewModel\NodeViewModel.cs" />
+    <Compile Include="ViewModel\EdgeViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\NetworkViewModel.cs" />
-    <Compile Include="ViewModel\OperationViewModel.cs" />
+    <Compile Include="ViewModel\NodeViewModelBase.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="ZoomAndPan\AnimationHelper.cs" />
     <Compile Include="ZoomAndPan\ZoomAndPanControl.cs" />
@@ -160,11 +156,11 @@
     <Compile Include="Zoom\ZoomControl.cs" />
     <Compile Include="Zoom\ZoomControlModes.cs" />
     <Compile Include="Zoom\ZoomViewModifierMode.cs" />
-    <Page Include="Controls\Head.xaml">
+    <Page Include="Controls\Body.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Node.xaml">
+    <Page Include="Controls\Head.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -197,10 +193,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Resources\NodeTemplates.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Resources\PipetteOperationItemTemplates.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -249,6 +241,10 @@
     <ProjectReference Include="..\Interfaces\Interfaces.csproj">
       <Project>{43FAB23B-DCDC-496D-A3B3-6F00EC9070AC}</Project>
       <Name>Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MVVMNodeEditor\MVVMNodeEditor.csproj">
+      <Project>{4872DC0B-68DA-4360-8A40-6CCA8A7465FE}</Project>
+      <Name>MVVMNodeEditor</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -8,4 +8,6 @@
     <converters:ChevBodyConverter x:Key="ChevBodyConverter" />
     <converters:ChevTailConverter x:Key="ChevTailConverter" />
     <converters:ChevHeadConverter x:Key="ChevHeadConverter" />
+    <converters:ChevHeadXPosConverter x:Key="ChevHeadXPosConverter" />
+    <converters:BooleanToHighlightConverter x:Key="BooleanToHighlightConverter"/>
 </ResourceDictionary>

@@ -1,0 +1,40 @@
+﻿<ContentControl x:Class="MVVMNodeEditor.Controls.Body"
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                xmlns:utility="clr-namespace:MVVMNodeEditor.Utility"
+                d:DesignHeight="300"
+                d:DesignWidth="300"
+                LayoutUpdated="Body_OnLayoutUpdated"
+                mc:Ignorable="d">
+    <ContentControl.ContentTemplate>
+        <DataTemplate>
+            <Canvas x:Name="chevCanvas" Background="Transparent">
+                <Canvas.Resources>
+                    <RectangleGeometry x:Key="chevBody">
+                        <RectangleGeometry.Rect>
+                            <MultiBinding Converter="{StaticResource RectConverter}">
+                                <Binding Path="ActualWidth" RelativeSource="{RelativeSource AncestorType={x:Type Grid}}" UpdateSourceTrigger="PropertyChanged" />
+                                <Binding Path="ActualHeight" RelativeSource="{RelativeSource AncestorType={x:Type Canvas}}" UpdateSourceTrigger="PropertyChanged" />
+                            </MultiBinding>
+                        </RectangleGeometry.Rect>
+                    </RectangleGeometry>
+
+                    <PathGeometry x:Key="chevHeadGeometry" Figures="{utility:MultiBinder {Binding Source={StaticResource ChevAngle}}, {Binding Path=ActualWidth, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType={x:Type Grid}}}, {Binding Path=ActualHeight, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType={x:Type Canvas}}}, {StaticResource ChevBodyConverter}}" />
+
+                    <PathGeometry x:Key="chevTailGeometry" Figures="{utility:MultiBinder {Binding Source={StaticResource ChevAngle}}, {Binding Path=ActualWidth, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType={x:Type Grid}}}, {Binding Path=ActualHeight, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType={x:Type Canvas}}}, {StaticResource ChevTailConverter}}" />
+                </Canvas.Resources>
+                <Path Fill="{StaticResource nodeFillBrush}">
+                    <Path.Data>
+                        <CombinedGeometry Geometry1="{StaticResource chevBody}" GeometryCombineMode="Exclude">
+                            <CombinedGeometry.Geometry2>
+                                <CombinedGeometry Geometry1="{DynamicResource chevHeadGeometry}" Geometry2="{DynamicResource chevTailGeometry}" GeometryCombineMode="Union" />
+                            </CombinedGeometry.Geometry2>
+                        </CombinedGeometry>
+                    </Path.Data>
+                </Path>
+            </Canvas>
+        </DataTemplate>
+    </ContentControl.ContentTemplate>
+</ContentControl>

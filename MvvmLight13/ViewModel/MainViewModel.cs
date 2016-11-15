@@ -31,12 +31,12 @@
         ///
         /// The width of the content (in content coordinates).
         /// 
-        private double contentWidth = 640;
+        private double contentWidth = 1600;
 
         ///
         /// The heigth of the content (in content coordinates).
         /// 
-        private double contentHeight = 480;
+        private double contentHeight = 900;
 
         ///
         /// The width of the viewport onto the content (in content coordinates).
@@ -223,7 +223,7 @@
             for(int i = 0; i< dataService.Operations.Count;i++)
             {
                 var t = dataService.Operations[i];
-                var x = new AspirateOperationViewModel(t)
+                var x = new NodeViewModel(t)
                 {
                     Name = "kxfdsd",
                     X = 100 + (100*i),

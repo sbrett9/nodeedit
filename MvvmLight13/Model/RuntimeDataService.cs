@@ -26,6 +26,7 @@
         {
             operations.Add(new Operation());
             operations.Add(new Operation());
+            operations.Add(new Operation());
         }
         #endregion
 

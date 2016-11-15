@@ -2,9 +2,11 @@
 {
     #region Using Declarations
 
+    using System;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Media;
+    using Utility;
 
     #endregion
 
@@ -15,6 +17,10 @@
         public static readonly DependencyProperty ChevAngleProperty = DependencyProperty.Register("ChevAngle", typeof(double), typeof(Tail), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsMeasure));
         public static readonly DependencyProperty ChevWidthProperty = DependencyProperty.Register("ChevWidth", typeof(double), typeof(Tail), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsMeasure));
         public static readonly DependencyProperty ChevHeightProperty = DependencyProperty.Register("ChevHeight", typeof(double), typeof(Tail), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsMeasure));
+        public static readonly DependencyProperty BindableActualHeightProperty = DependencyProperty.Register("BindableActualHeight", typeof(double), typeof(Tail), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsMeasure));
+        public static readonly DependencyProperty BindableActualWidthProperty = DependencyProperty.Register("BindableActualWidth", typeof(double), typeof(Tail), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsMeasure));
+        public static readonly DependencyProperty XProperty = DependencyProperty.Register("X", typeof(double), typeof(Tail), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.None));
+        public static readonly DependencyProperty YProperty = DependencyProperty.Register("Y", typeof(double), typeof(Tail), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.None));
 
         public Brush Fill
         {
@@ -39,9 +45,37 @@
             set { SetValue(ChevHeightProperty, value); }
         }
 
+        public double BindableActualHeight
+        {
+            get { return (double)GetValue(BindableActualHeightProperty); }
+            set { SetValue(BindableActualHeightProperty, value); }
+        }
+
+        public double BindableActualWidth
+        {
+            get { return (double)GetValue(BindableActualWidthProperty); }
+            set { SetValue(BindableActualWidthProperty, value); }
+        }
+        public double X
+        {
+            get { return (double)GetValue(XProperty); }
+            set { SetValue(XProperty, value); }
+        }
+        public double Y
+        {
+            get { return (double)GetValue(YProperty); }
+            set { SetValue(YProperty, value); }
+        }
+
         public Tail()
         {
             InitializeComponent();
+        }
+
+        private void OnLayoutUpdated(object _sender, EventArgs _e)
+        {
+            BindableActualHeight = ActualHeight;
+            BindableActualWidth = ActualWidth;
         }
     }
 }

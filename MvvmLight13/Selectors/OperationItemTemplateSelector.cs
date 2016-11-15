@@ -15,7 +15,7 @@
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
             var viewModel = item as ViewModelBase;
-            if (viewModel is AspirateOperationViewModel)
+            if (viewModel is NodeViewModel)
             {
                 return AspirateOperationTemplate;
             }

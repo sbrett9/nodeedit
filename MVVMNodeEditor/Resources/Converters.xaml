@@ -1,0 +1,13 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:converters="clr-namespace:MVVMNodeEditor.Converters">
+    <converters:EqualityToBooleanConverter x:Key="EqualityConverter" />
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    <converters:RectConvertor x:Key="RectConverter" />
+    <converters:ChevBodyConverter x:Key="ChevBodyConverter" />
+    <converters:ChevTailConverter x:Key="ChevTailConverter" />
+    <converters:ChevHeadConverter x:Key="ChevHeadConverter" />
+    <converters:ChevHeadXPosConverter x:Key="ChevHeadXPosConverter" />
+    <converters:BooleanToHighlightConverter x:Key="BooleanToHighlightConverter" />
+    <converters:SelectedNodesConverter x:Key="SelectedNodesConverter"/>
+</ResourceDictionary>

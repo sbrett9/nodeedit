@@ -46,7 +46,7 @@
         /// <summary>
         /// Cached list of selected NodeItems, used while dragging nodes.
         /// </summary>
-        private List<NodeItem> cachedSelectedNodeItems = null;
+        private List<Node> cachedSelectedNodeItems = null;
 
         /// <summary>
         /// The threshold distance the mouse-cursor must move before drag-selection begins.
@@ -247,7 +247,7 @@
             //
             for (int nodeIndex = 0; nodeIndex < this.Nodes.Count; ++nodeIndex)
             {
-                var nodeItem = (NodeItem)nodeItemsControl.ItemContainerGenerator.ContainerFromIndex(nodeIndex);
+                var nodeItem = (Node)nodeItemsControl.ItemContainerGenerator.ContainerFromIndex(nodeIndex);
                 var transformToAncestor = nodeItem.TransformToAncestor(this);
                 Point itemPt1 = transformToAncestor.Transform(new Point(0, 0));
                 Point itemPt2 = transformToAncestor.Transform(new Point(nodeItem.ActualWidth, nodeItem.ActualHeight));

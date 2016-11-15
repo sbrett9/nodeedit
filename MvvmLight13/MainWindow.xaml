@@ -9,8 +9,7 @@
                       xmlns:ignore="http://www.galasoft.ch/ignore" 
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
                       xmlns:zoom="clr-namespace:MvvmLight13.Zoom" 
-                      xmlns:zoomAndPan="clr-namespace:MvvmLight13.ZoomAndPan" 
-                      Title="MVVM Light Application" 
+                      xmlns:zoomAndPan="clr-namespace:MvvmLight13.ZoomAndPan" Title="MVVM Light Application" 
                       Width="800" 
                       Height="600" 
                       DataContext="{Binding Main, Source={StaticResource Locator}}" 
@@ -29,7 +28,7 @@
         <ScrollViewer x:Name="scrollViewer" CanContentScroll="True" Focusable="False" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
             <AdornerDecorator>
                 <Grid Width="{Binding ContentWidth}" Height="{Binding ContentHeight}">
-                    <controls1:NodeView x:Name="networkControl" NodesSource="{Binding Path=Network.Nodes}" ConnectionsSource="{Binding Path=Network.Connections}" Margin="-31,-4,31,4">
+                    <controls1:NodeView x:Name="networkControl" NodesSource="{Binding Path=Network.Nodes}" ConnectionsSource="{Binding Path=Network.Edges}" Margin="-31,-4,31,4">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="ConnectionDragStarted">
                                 <command:EventToCommand Command="{Binding Path=ConnectionDragStartedCommand, UpdateSourceTrigger=PropertyChanged}" CommandParameter="{Binding}" />

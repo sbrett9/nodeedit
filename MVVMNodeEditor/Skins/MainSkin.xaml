@@ -1,0 +1,15 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:hr="http://HamiltonCompany.com/wpf/resources" >
+    <ResourceDictionary.MergedDictionaries>
+        <x:Static Member="hr:Default.Instance" />
+        <ResourceDictionary Source="pack://application:,,,/Resources/Common.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/Resources/Brushes.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/Resources/Converters.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/Resources/NodeTemplate.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/Resources/NetworkTemplate.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/Resources/ZoomTemplates.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/Resources/OperationTemplates.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+</ResourceDictionary>

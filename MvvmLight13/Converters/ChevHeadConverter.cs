@@ -37,11 +37,11 @@
             var fig = new PathFigure();
             fig.IsClosed = true;
 
-            fig.StartPoint = new Point(-c, 0);
-            fig.Segments.Add(new LineSegment(new Point(0, 0), false));
+            fig.StartPoint = new Point(0, 0);
+            fig.Segments.Add(new LineSegment(new Point(c, 0), false));
+            fig.Segments.Add(new LineSegment(new Point(c, height), false));
             fig.Segments.Add(new LineSegment(new Point(0, height), false));
-            fig.Segments.Add(new LineSegment(new Point(-c, height), false));
-            fig.Segments.Add(new LineSegment(new Point(0, halfHeight), false));
+            fig.Segments.Add(new LineSegment(new Point(c, halfHeight), false));
             z.Add(fig);
 
 

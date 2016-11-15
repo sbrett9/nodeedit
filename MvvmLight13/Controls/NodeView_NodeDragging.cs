@@ -2,17 +2,28 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Linq;
     using System.Windows;
-    using System.Windows.Controls;
-    using MahApps.Metro.Controls;
-    using Utility;
+    using System.Windows.Input;
+    using Events.Drag.Edge.EdgeDragging;
+    using Events.Drag.Node.NodeDragCompleted;
+    using Events.Drag.Node.NodeDragging;
+    using Events.Drag.Node.NodeDragStarted;
     using ViewModel;
 
     public partial class NodeView
     {
         #region Private Methods
+
+        private void SetEdgePositions(EdgeViewModel edgeModel, double x, double y)
+        {
+            edgeModel.X = x;
+            edgeModel.Y = y;
+        }
+        private void UpdateEdgePositions(EdgeViewModel edgeModel, double _deltaX, double _deltaY)
+        {
+            edgeModel.X += _deltaX;
+            edgeModel.Y += _deltaY;
+        }
 
         /// <summary>
         ///     Event raised when the user starts to drag a node.
@@ -44,11 +55,11 @@
             //
             if (this.cachedSelectedNodeItems == null)
             {
-                this.cachedSelectedNodeItems = new List<NodeItem>();
+                this.cachedSelectedNodeItems = new List<Node>();
 
                 foreach (var selectedNode in this.SelectedNodes)
                 {
-                    NodeItem nodeItem = FindAssociatedNodeItem(selectedNode);
+                    Node nodeItem = FindAssociatedNodeItem(selectedNode);
                     if (nodeItem == null)
                     {
                         throw new ApplicationException("Unexpected code path!");
@@ -65,48 +76,40 @@
             {
                 nodeItem.X += e.HorizontalChange;
                 nodeItem.Y += e.VerticalChange;
-                Debug.WriteLine(string.Format("Node {0} Position = {1},{2}",Name,nodeItem.X,nodeItem.Y));
-                Debug.WriteLine(string.Format("Node {0} w/h = {1},{2}", Name, nodeItem.ActualWidth, nodeItem.ActualHeight));
-            }
-
-            //detect if the head of the node intersects with any other node's tail
-            if (SelectedNodes.Count == 1)
-            {
-                NodeItem selected = FindAssociatedNodeItem(SelectedNodes[0]);
-                foreach (var nodeObj in Nodes)
+                NodeViewModelBase vm = nodeItem.Content as NodeViewModelBase;
+                if (vm != null)
                 {
-                    if (nodeObj == SelectedNodes[0])
-                        continue;
-                    NodeItem nodeItem = FindAssociatedNodeItem(nodeObj);
-
-                    var selectedHead = Utilities.FindChild<Head>(selected);
-                    var targetTail = Utilities.FindChild<Tail>(nodeItem);
-                    
-                    if (selectedHead == null)
-                        throw new InvalidOperationException();
-                    if(targetTail == null)
-                        throw new InvalidOperationException();
-
-                    Rect intersect = Utilities.DetectCollisions(selectedHead, targetTail);
-                    ConnectorViewModel headConnector = selectedHead.DataContext as ConnectorViewModel;
-                    ConnectorViewModel tailConnector = targetTail.DataContext as ConnectorViewModel;
-                    if (intersect.IsEmpty)
-                    {
-                        headConnector.Highlighted = false;
-                        tailConnector.Highlighted = false;
-                    }
-                    else
-                    {
-                        headConnector.Highlighted = true;
-                        tailConnector.Highlighted = true;
-                    }
+                    vm.Left.X += e.HorizontalChange;
+                    vm.Left.Y += e.VerticalChange;
+                    vm.Right.X += e.HorizontalChange;
+                    vm.Right.Y += e.VerticalChange;
                 }
+
+            }
+
+            //Detect Selected node insert operation
+            Point p = Mouse.GetPosition(this);
+            List<object> unselected = new List<object>();
+            foreach (var node in Nodes)
+            {
+                if (!SelectedNodes.Contains(node))
+                    unselected.Add(node);
+
+            }
+            foreach (var node in unselected)
+            {
+                Node nodeItem = FindAssociatedNodeItem(node);
+                NodeViewModelBase vm = nodeItem.Content as NodeViewModelBase;
+                if (vm == null)
+                    throw new NotSupportedException("Node Control contents must inherit from NodeViewModelBase.");
+                var targetRect = new Rect(new Point(vm.Left.X, vm.Left.Y), new Size(vm.Left.Width, vm.Left.Height));
             }
 
 
-            var eventArgs = new NodeDraggingEventArgs(NodeDraggingEvent, this, this.SelectedNodes, e.HorizontalChange,e.VerticalChange);
+            var eventArgs = new NodeDraggingEventArgs(NodeDraggingEvent, this, this.SelectedNodes, e.HorizontalChange, e.VerticalChange);
             RaiseEvent(eventArgs);
         }
+
 
         /// <summary>
         ///     Event raised when the user has finished dragging a node.

@@ -11,7 +11,15 @@
     using System.Windows.Controls.Primitives;
     using System.Windows.Input;
     using System.Windows.Media;
-    using Utility;
+    using Events.Drag.Edge.EdgeDragCompleted;
+    using Events.Drag.Edge.EdgeDragging;
+    using Events.Drag.Edge.EdgeDragStarted;
+    using Events.Drag.Node.NodeDragCompleted;
+    using Events.Drag.Node.NodeDragging;
+    using Events.Drag.Node.NodeDragStarted;
+    using Events.Insert.NodeInsertCompleted;
+    using Events.Insert.NodeInserting;
+    using Events.Insert.NodeInsertStarted;
 
     #endregion
 
@@ -20,34 +28,143 @@
     /// </summary>
     public partial class NodeView : Control
     {
-        public NodeView()
+        #region Events
+        /// <summary>
+        ///     An event raised when the nodes selected in the NodeView has changed.
+        /// </summary>
+        public event SelectionChangedEventHandler SelectionChanged;
+        #endregion
+
+        #region Dependency Property/Event Definitions
+
+        private static readonly DependencyPropertyKey NodesPropertyKey = DependencyProperty.RegisterReadOnly("Nodes", typeof(ImpObservableCollection<object>), typeof(NodeView), new FrameworkPropertyMetadata());
+        public static readonly DependencyProperty NodesProperty = NodesPropertyKey.DependencyProperty;
+
+        private static readonly DependencyPropertyKey ConnectionsPropertyKey = DependencyProperty.RegisterReadOnly("Connections", typeof(ImpObservableCollection<object>), typeof(NodeView), new FrameworkPropertyMetadata());
+        public static readonly DependencyProperty ConnectionsProperty = ConnectionsPropertyKey.DependencyProperty;
+
+        public static readonly DependencyProperty NodesSourceProperty = DependencyProperty.Register("NodesSource", typeof(IEnumerable), typeof(NodeView), new FrameworkPropertyMetadata(NodesSource_PropertyChanged));
+        public static readonly DependencyProperty ConnectionsSourceProperty = DependencyProperty.Register("ConnectionsSource", typeof(IEnumerable), typeof(NodeView), new FrameworkPropertyMetadata(ConnectionsSource_PropertyChanged));
+
+        public static readonly DependencyProperty IsClearSelectionOnEmptySpaceClickEnabledProperty = DependencyProperty.Register("IsClearSelectionOnEmptySpaceClickEnabled", typeof(bool), typeof(NodeView), new FrameworkPropertyMetadata(true));
+
+        public static readonly DependencyProperty EnableConnectionDraggingProperty = DependencyProperty.Register("EnableConnectionDragging", typeof(bool), typeof(NodeView), new FrameworkPropertyMetadata(true));
+
+        private static readonly DependencyPropertyKey IsDraggingConnectionPropertyKey = DependencyProperty.RegisterReadOnly("IsDraggingConnection", typeof(bool), typeof(NodeView), new FrameworkPropertyMetadata(false));
+
+        public static readonly DependencyProperty IsDraggingConnectionProperty = IsDraggingConnectionPropertyKey.DependencyProperty;
+
+        private static readonly DependencyPropertyKey IsNotDraggingConnectionPropertyKey = DependencyProperty.RegisterReadOnly("IsNotDraggingConnection", typeof(bool), typeof(NodeView), new FrameworkPropertyMetadata(true));
+
+        public static readonly DependencyProperty IsNotDraggingConnectionProperty = IsNotDraggingConnectionPropertyKey.DependencyProperty;
+
+        public static readonly DependencyProperty EnableNodeDraggingProperty = DependencyProperty.Register("EnableNodeDragging", typeof(bool), typeof(NodeView), new FrameworkPropertyMetadata(true));
+
+        private static readonly DependencyPropertyKey IsDraggingNodePropertyKey = DependencyProperty.RegisterReadOnly("IsDraggingNode", typeof(bool), typeof(NodeView), new FrameworkPropertyMetadata(false));
+
+        public static readonly DependencyProperty IsDraggingNodeProperty = IsDraggingNodePropertyKey.DependencyProperty;
+
+        private static readonly DependencyPropertyKey IsNotDraggingNodePropertyKey = DependencyProperty.RegisterReadOnly("IsNotDraggingNode", typeof(bool), typeof(NodeView), new FrameworkPropertyMetadata(true));
+
+        public static readonly DependencyProperty IsNotDraggingNodeProperty = IsDraggingNodePropertyKey.DependencyProperty;
+
+        private static readonly DependencyPropertyKey IsDraggingPropertyKey = DependencyProperty.RegisterReadOnly("IsDragging", typeof(bool), typeof(NodeView), new FrameworkPropertyMetadata(false));
+
+        public static readonly DependencyProperty IsDraggingProperty = IsDraggingPropertyKey.DependencyProperty;
+
+        private static readonly DependencyPropertyKey IsNotDraggingPropertyKey = DependencyProperty.RegisterReadOnly("IsNotDragging", typeof(bool), typeof(NodeView), new FrameworkPropertyMetadata(true));
+
+        public static readonly DependencyProperty IsNotDraggingProperty = IsNotDraggingPropertyKey.DependencyProperty;
+
+        public static readonly DependencyProperty NodeItemTemplateProperty = DependencyProperty.Register("NodeItemTemplate", typeof(DataTemplate), typeof(NodeView));
+
+        public static readonly DependencyProperty NodeItemTemplateSelectorProperty = DependencyProperty.Register("NodeItemTemplateSelector", typeof(DataTemplateSelector), typeof(NodeView));
+
+        public static readonly DependencyProperty NodeItemContainerStyleProperty = DependencyProperty.Register("NodeItemContainerStyle", typeof(Style), typeof(NodeView));
+
+        public static readonly DependencyProperty ConnectionItemTemplateProperty = DependencyProperty.Register("ConnectionItemTemplate", typeof(DataTemplate), typeof(NodeView));
+
+        public static readonly DependencyProperty ConnectionItemTemplateSelectorProperty = DependencyProperty.Register("ConnectionItemTemplateSelector", typeof(DataTemplateSelector), typeof(NodeView));
+
+        public static readonly DependencyProperty ConnectionItemContainerStyleProperty = DependencyProperty.Register("ConnectionItemContainerStyle", typeof(Style), typeof(NodeView));
+
+        public static readonly RoutedEvent NodeDragStartedEvent = EventManager.RegisterRoutedEvent("NodeDragStarted", RoutingStrategy.Bubble, typeof(NodeDragStartedEventHandler), typeof(NodeView));
+        public static readonly RoutedEvent NodeDraggingEvent = EventManager.RegisterRoutedEvent("NodeDragging", RoutingStrategy.Bubble, typeof(NodeDraggingEventHandler), typeof(NodeView));
+        public static readonly RoutedEvent NodeDragCompletedEvent = EventManager.RegisterRoutedEvent("NodeDragCompleted", RoutingStrategy.Bubble, typeof(NodeDragCompletedEventHandler), typeof(NodeView));
+
+        public static readonly RoutedEvent NodeInsertStartedEvent = EventManager.RegisterRoutedEvent("NodeInsertStarted", RoutingStrategy.Bubble, typeof(NodeInsertStartedEventHandler), typeof(NodeView));
+        public static readonly RoutedEvent NodeInsertingEvent = EventManager.RegisterRoutedEvent("NodeInserting", RoutingStrategy.Bubble, typeof(NodeInsertingEventHandler), typeof(NodeView));
+        public static readonly RoutedEvent NodeInsertCompletedEvent = EventManager.RegisterRoutedEvent("NodeInsertCompleted", RoutingStrategy.Bubble, typeof(NodeInsertCompletedEventHandler), typeof(NodeView));
+
+        //public static readonly RoutedEvent NodePrependStartingEvent = EventManager.RegisterRoutedEvent("NodePrependStarting", RoutingStrategy.Bubble, typeof(NodePrependStartingEventHandler), typeof(NodeView));
+        //public static readonly RoutedEvent NodePrependingEvent = EventManager.RegisterRoutedEvent("NodePrepending", RoutingStrategy.Bubble, typeof(NodePrependingEventHandler), typeof(NodeView));
+        //public static readonly RoutedEvent NodePrependCompletedEvent = EventManager.RegisterRoutedEvent("NodePrependCompleted", RoutingStrategy.Bubble, typeof(NodePrependCompletedEventHandler), typeof(NodeView));
+
+        //public static readonly RoutedEvent NodeAppendStartingEvent = EventManager.RegisterRoutedEvent("NodeAppendStarting", RoutingStrategy.Bubble, typeof(NodeAppendStartingEventHandler), typeof(NodeView));
+        //public static readonly RoutedEvent NodeAppendingEvent = EventManager.RegisterRoutedEvent("NodeAppending", RoutingStrategy.Bubble, typeof(NodeAppendingEventHandler), typeof(NodeView));
+        //public static readonly RoutedEvent NodeAppendCompletedEvent = EventManager.RegisterRoutedEvent("NodeAppendCompleted", RoutingStrategy.Bubble, typeof(NodeAppendCompletedEventHandler), typeof(NodeView));
+
+
+        public static readonly RoutedCommand SelectAllCommand;
+        public static readonly RoutedCommand SelectNoneCommand;
+        public static readonly RoutedCommand InvertSelectionCommand;
+        public static readonly RoutedCommand CancelConnectionDraggingCommand;
+
+        #endregion Dependency Property/Event Definitions
+
+
+        #region Private Data Members
+
+        /// <summary>
+        ///     Cached reference to the NodeItemsControl in the visual-tree.
+        /// </summary>
+        private NodesControl nodeItemsControl = null;
+
+        /// <summary>
+        ///     Cached reference to the ItemsControl for connections in the visual-tree.
+        /// </summary>
+        private ItemsControl connectionItemsControl;
+
+        /// <summary>
+        ///     Cached list of currently selected nodes.
+        /// </summary>
+        private List<object> initialSelectedNodes;
+
+        #endregion Private Data Members
+
+        #region Event Properties
+
+        /// <summary>
+        ///     Event raised when the user starts dragging a node in the network.
+        /// </summary>
+        public event NodeDragStartedEventHandler NodeDragStarted
         {
-            //
-            // Create a collection to contain nodes.
-            //
-            Nodes = new ImpObservableCollection<object>();
-
-            //
-            // Create a collection to contain connections.
-            //
-            Connections = new ImpObservableCollection<object>();
-
-            //
-            // Default background is white.
-            //
-            Background = Brushes.White;
-
-            //
-            // Add handlers for node and connector drag events.
-            //
-            AddHandler(NodeItem.NodeDragStartedEvent, new NodeDragStartedEventHandler(NodeItem_DragStarted));
-            AddHandler(NodeItem.NodeDraggingEvent, new NodeDraggingEventHandler(NodeItem_Dragging));
-            AddHandler(NodeItem.NodeDragCompletedEvent, new NodeDragCompletedEventHandler(NodeItem_DragCompleted));
-            AddHandler(ConnectorItem.ConnectorDragStartedEvent, new ConnectorItemDragStartedEventHandler(ConnectorItem_DragStarted));
-            AddHandler(ConnectorItem.ConnectorDraggingEvent, new ConnectorItemDraggingEventHandler(ConnectorItem_Dragging));
-            AddHandler(ConnectorItem.ConnectorDragCompletedEvent, new ConnectorItemDragCompletedEventHandler(ConnectorItem_DragCompleted));
+            add { AddHandler(NodeDragStartedEvent, value); }
+            remove { RemoveHandler(NodeDragStartedEvent, value); }
         }
 
+        /// <summary>
+        ///     Event raised while user is dragging a node in the network.
+        /// </summary>
+        public event NodeDraggingEventHandler NodeDragging
+        {
+            add { AddHandler(NodeDraggingEvent, value); }
+            remove { RemoveHandler(NodeDraggingEvent, value); }
+        }
+
+        /// <summary>
+        ///     Event raised when the user has completed dragging a node in the network.
+        /// </summary>
+        public event NodeDragCompletedEventHandler NodeDragCompleted
+        {
+            add { AddHandler(NodeDragCompletedEvent, value); }
+            remove { RemoveHandler(NodeDragCompletedEvent, value); }
+        }
+
+
+        #endregion
+
+        #region Dependency Properties
         /// <summary>
         ///     Collection of nodes in the network.
         /// </summary>
@@ -232,6 +349,10 @@
             set { SetValue(ConnectionItemContainerStyleProperty, value); }
         }
 
+        #endregion
+
+        #region Properties
+
         /// <summary>
         ///     A reference to currently selected node.
         /// </summary>
@@ -293,76 +414,87 @@
                 return initialSelectedNodes;
             }
         }
+        #endregion
+
+        #region Constructors
+
 
         /// <summary>
-        ///     Event raised when the user starts dragging a node in the network.
+        ///     Static constructor.
         /// </summary>
-        public event NodeDragStartedEventHandler NodeDragStarted
+        static NodeView()
         {
-            add { AddHandler(NodeDragStartedEvent, value); }
-            remove { RemoveHandler(NodeDragStartedEvent, value); }
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(NodeView),
+                new FrameworkPropertyMetadata(typeof(NodeView)));
+
+            var inputs = new InputGestureCollection();
+            inputs.Add(new KeyGesture(Key.A, ModifierKeys.Control));
+            SelectAllCommand = new RoutedCommand("SelectAll", typeof(NodeView), inputs);
+
+            inputs = new InputGestureCollection();
+            inputs.Add(new KeyGesture(Key.Escape));
+            SelectNoneCommand = new RoutedCommand("SelectNone", typeof(NodeView), inputs);
+
+            inputs = new InputGestureCollection();
+            inputs.Add(new KeyGesture(Key.I, ModifierKeys.Control));
+            InvertSelectionCommand = new RoutedCommand("InvertSelection", typeof(NodeView), inputs);
+
+            CancelConnectionDraggingCommand = new RoutedCommand("CancelConnectionDragging", typeof(NodeView));
+
+            var binding = new CommandBinding();
+            binding.Command = SelectAllCommand;
+            binding.Executed += SelectAll_Executed;
+            CommandManager.RegisterClassCommandBinding(typeof(NodeView), binding);
+
+            binding = new CommandBinding();
+            binding.Command = SelectNoneCommand;
+            binding.Executed += SelectNone_Executed;
+            CommandManager.RegisterClassCommandBinding(typeof(NodeView), binding);
+
+            binding = new CommandBinding();
+            binding.Command = InvertSelectionCommand;
+            binding.Executed += InvertSelection_Executed;
+            CommandManager.RegisterClassCommandBinding(typeof(NodeView), binding);
+
+            binding = new CommandBinding();
+            binding.Command = CancelConnectionDraggingCommand;
+            binding.Executed += CancelConnectionDragging_Executed;
+            CommandManager.RegisterClassCommandBinding(typeof(NodeView), binding);
         }
 
-        /// <summary>
-        ///     Event raised while user is dragging a node in the network.
-        /// </summary>
-        public event NodeDraggingEventHandler NodeDragging
+        public NodeView()
         {
-            add { AddHandler(NodeDraggingEvent, value); }
-            remove { RemoveHandler(NodeDraggingEvent, value); }
+            //
+            // Create a collection to contain nodes.
+            //
+            Nodes = new ImpObservableCollection<object>();
+
+            //
+            // Create a collection to contain connections.
+            //
+            Connections = new ImpObservableCollection<object>();
+
+            //
+            // Default background is white.
+            //
+            Background = Brushes.White;
+
+            //
+            // Add handlers for node and connector drag events.
+            //
+            AddHandler(Node.NodeDragStartedEvent, new NodeDragStartedEventHandler(NodeItem_DragStarted));
+            AddHandler(Node.NodeDraggingEvent, new NodeDraggingEventHandler(NodeItem_Dragging));
+            AddHandler(Node.NodeDragCompletedEvent, new NodeDragCompletedEventHandler(NodeItem_DragCompleted));
+            AddHandler(NodeInsertStartedEvent, new NodeInsertStartedEventHandler(Node_InsertStarted));
+            AddHandler(NodeInsertingEvent, new NodeInsertingEventHandler(Node_Inserting));
+            AddHandler(NodeInsertCompletedEvent, new NodeInsertCompletedEventHandler(Node_InsertCompleted));
+
         }
 
-        /// <summary>
-        ///     Event raised when the user has completed dragging a node in the network.
-        /// </summary>
-        public event NodeDragCompletedEventHandler NodeDragCompleted
-        {
-            add { AddHandler(NodeDragCompletedEvent, value); }
-            remove { RemoveHandler(NodeDragCompletedEvent, value); }
-        }
+        #endregion
 
-        /// <summary>
-        ///     Event raised when the user starts dragging a connector in the network.
-        /// </summary>
-        public event ConnectionDragStartedEventHandler ConnectionDragStarted
-        {
-            add { AddHandler(ConnectionDragStartedEvent, value); }
-            remove { RemoveHandler(ConnectionDragStartedEvent, value); }
-        }
 
-        /// <summary>
-        ///     Event raised while user drags a connection over the connector of a node in the network.
-        ///     The event handlers should supply a feedback objects and data-template that displays the
-        ///     object as an appropriate graphic.
-        /// </summary>
-        public event QueryConnectionFeedbackEventHandler QueryConnectionFeedback
-        {
-            add { AddHandler(QueryConnectionFeedbackEvent, value); }
-            remove { RemoveHandler(QueryConnectionFeedbackEvent, value); }
-        }
-
-        /// <summary>
-        ///     Event raised when a connection is being dragged.
-        /// </summary>
-        public event ConnectionDraggingEventHandler ConnectionDragging
-        {
-            add { AddHandler(ConnectionDraggingEvent, value); }
-            remove { RemoveHandler(ConnectionDraggingEvent, value); }
-        }
-
-        /// <summary>
-        ///     Event raised when the user has completed dragging a connection in the network.
-        /// </summary>
-        public event ConnectionDragCompletedEventHandler ConnectionDragCompleted
-        {
-            add { AddHandler(ConnectionDragCompletedEvent, value); }
-            remove { RemoveHandler(ConnectionDragCompletedEvent, value); }
-        }
-
-        /// <summary>
-        ///     An event raised when the nodes selected in the NodeView has changed.
-        /// </summary>
-        public event SelectionChangedEventHandler SelectionChanged;
+        #region Public Methods
 
         /// <summary>
         ///     Bring the currently selected nodes into view.
@@ -393,7 +525,7 @@
 
             foreach (var node in nodes)
             {
-                NodeItem nodeItem = FindAssociatedNodeItem(node);
+                Node nodeItem = FindAssociatedNodeItem(node);
                 var nodeRect = new Rect(nodeItem.X, nodeItem.Y, nodeItem.ActualWidth, nodeItem.ActualHeight);
 
                 if (rect == Rect.Empty)
@@ -461,158 +593,27 @@
 
             //
             // Now that connection dragging has completed, don't any feedback adorner.
-            //
-            ClearFeedbackAdorner();
+            ////
+            //ClearFeedbackAdorner();
 
-            draggedOutConnectorItem.CancelConnectionDragging();
+            //draggedOutEdge.CancelConnectionDragging();
 
             IsDragging = false;
             IsNotDragging = true;
             IsDraggingConnection = false;
             IsNotDraggingConnection = true;
-            this.draggedOutConnectorItem = null;
-            this.draggedOutNodeDataContext = null;
-            this.draggedOutConnectorDataContext = null;
-            this.draggingConnectionDataContext = null;
+            //this.draggedOutEdge = null;
+            //this.draggedOutNodeDataContext = null;
+            //this.draggedOutConnectorDataContext = null;
+            //this.draggingConnectionDataContext = null;
         }
 
-        #region Dependency Property/Event Definitions
+        #endregion
 
-        private static readonly DependencyPropertyKey NodesPropertyKey = DependencyProperty.RegisterReadOnly("Nodes", typeof(ImpObservableCollection<object>), typeof(NodeView), new FrameworkPropertyMetadata());
-        public static readonly DependencyProperty NodesProperty = NodesPropertyKey.DependencyProperty;
 
-        private static readonly DependencyPropertyKey ConnectionsPropertyKey = DependencyProperty.RegisterReadOnly("Connections", typeof(ImpObservableCollection<object>), typeof(NodeView), new FrameworkPropertyMetadata());
-        public static readonly DependencyProperty ConnectionsProperty = ConnectionsPropertyKey.DependencyProperty;
-
-        public static readonly DependencyProperty NodesSourceProperty =DependencyProperty.Register("NodesSource", typeof(IEnumerable), typeof(NodeView),new FrameworkPropertyMetadata(NodesSource_PropertyChanged));
-        public static readonly DependencyProperty ConnectionsSourceProperty =DependencyProperty.Register("ConnectionsSource", typeof(IEnumerable), typeof(NodeView),new FrameworkPropertyMetadata(ConnectionsSource_PropertyChanged));
-
-        public static readonly DependencyProperty IsClearSelectionOnEmptySpaceClickEnabledProperty =DependencyProperty.Register("IsClearSelectionOnEmptySpaceClickEnabled", typeof(bool),typeof(NodeView),new FrameworkPropertyMetadata(true));
-
-        public static readonly DependencyProperty EnableConnectionDraggingProperty =DependencyProperty.Register("EnableConnectionDragging", typeof(bool), typeof(NodeView),new FrameworkPropertyMetadata(true));
-
-        private static readonly DependencyPropertyKey IsDraggingConnectionPropertyKey =DependencyProperty.RegisterReadOnly("IsDraggingConnection", typeof(bool), typeof(NodeView),new FrameworkPropertyMetadata(false));
-
-        public static readonly DependencyProperty IsDraggingConnectionProperty =IsDraggingConnectionPropertyKey.DependencyProperty;
-
-        private static readonly DependencyPropertyKey IsNotDraggingConnectionPropertyKey =DependencyProperty.RegisterReadOnly("IsNotDraggingConnection", typeof(bool), typeof(NodeView),new FrameworkPropertyMetadata(true));
-
-        public static readonly DependencyProperty IsNotDraggingConnectionProperty =IsNotDraggingConnectionPropertyKey.DependencyProperty;
-
-        public static readonly DependencyProperty EnableNodeDraggingProperty =DependencyProperty.Register("EnableNodeDragging", typeof(bool), typeof(NodeView),new FrameworkPropertyMetadata(true));
-
-        private static readonly DependencyPropertyKey IsDraggingNodePropertyKey =DependencyProperty.RegisterReadOnly("IsDraggingNode", typeof(bool), typeof(NodeView),new FrameworkPropertyMetadata(false));
-
-        public static readonly DependencyProperty IsDraggingNodeProperty =IsDraggingNodePropertyKey.DependencyProperty;
-
-        private static readonly DependencyPropertyKey IsNotDraggingNodePropertyKey =DependencyProperty.RegisterReadOnly("IsNotDraggingNode", typeof(bool), typeof(NodeView),new FrameworkPropertyMetadata(true));
-
-        public static readonly DependencyProperty IsNotDraggingNodeProperty =IsDraggingNodePropertyKey.DependencyProperty;
-
-        private static readonly DependencyPropertyKey IsDraggingPropertyKey =DependencyProperty.RegisterReadOnly("IsDragging", typeof(bool), typeof(NodeView),new FrameworkPropertyMetadata(false));
-
-        public static readonly DependencyProperty IsDraggingProperty = IsDraggingPropertyKey.DependencyProperty;
-
-        private static readonly DependencyPropertyKey IsNotDraggingPropertyKey =DependencyProperty.RegisterReadOnly("IsNotDragging", typeof(bool), typeof(NodeView),new FrameworkPropertyMetadata(true));
-
-        public static readonly DependencyProperty IsNotDraggingProperty =IsNotDraggingPropertyKey.DependencyProperty;
-
-        public static readonly DependencyProperty NodeItemTemplateProperty =DependencyProperty.Register("NodeItemTemplate", typeof(DataTemplate), typeof(NodeView));
-
-        public static readonly DependencyProperty NodeItemTemplateSelectorProperty =DependencyProperty.Register("NodeItemTemplateSelector", typeof(DataTemplateSelector),typeof(NodeView));
-
-        public static readonly DependencyProperty NodeItemContainerStyleProperty =DependencyProperty.Register("NodeItemContainerStyle", typeof(Style), typeof(NodeView));
-
-        public static readonly DependencyProperty ConnectionItemTemplateProperty =DependencyProperty.Register("ConnectionItemTemplate", typeof(DataTemplate), typeof(NodeView));
-
-        public static readonly DependencyProperty ConnectionItemTemplateSelectorProperty =DependencyProperty.Register("ConnectionItemTemplateSelector", typeof(DataTemplateSelector),typeof(NodeView));
-
-        public static readonly DependencyProperty ConnectionItemContainerStyleProperty =DependencyProperty.Register("ConnectionItemContainerStyle", typeof(Style), typeof(NodeView));
-
-        public static readonly RoutedEvent NodeDragStartedEvent =EventManager.RegisterRoutedEvent("NodeDragStarted", RoutingStrategy.Bubble,typeof(NodeDragStartedEventHandler), typeof(NodeView));
-
-        public static readonly RoutedEvent NodeDraggingEvent =EventManager.RegisterRoutedEvent("NodeDragging", RoutingStrategy.Bubble,typeof(NodeDraggingEventHandler), typeof(NodeView));
-
-        public static readonly RoutedEvent NodeDragCompletedEvent =EventManager.RegisterRoutedEvent("NodeDragCompleted", RoutingStrategy.Bubble,typeof(NodeDragCompletedEventHandler), typeof(NodeView));
-
-        public static readonly RoutedEvent ConnectionDragStartedEvent =EventManager.RegisterRoutedEvent("ConnectionDragStarted", RoutingStrategy.Bubble,typeof(ConnectionDragStartedEventHandler), typeof(NodeView));
-
-        public static readonly RoutedEvent QueryConnectionFeedbackEvent =EventManager.RegisterRoutedEvent("QueryConnectionFeedback", RoutingStrategy.Bubble,typeof(QueryConnectionFeedbackEventHandler), typeof(NodeView));
-
-        public static readonly RoutedEvent ConnectionDraggingEvent =EventManager.RegisterRoutedEvent("ConnectionDragging", RoutingStrategy.Bubble,typeof(ConnectionDraggingEventHandler), typeof(NodeView));
-
-        public static readonly RoutedEvent ConnectionDragCompletedEvent =EventManager.RegisterRoutedEvent("ConnectionDragCompleted", RoutingStrategy.Bubble,typeof(ConnectionDragCompletedEventHandler), typeof(NodeView));
-
-        public static readonly RoutedCommand SelectAllCommand;
-        public static readonly RoutedCommand SelectNoneCommand;
-        public static readonly RoutedCommand InvertSelectionCommand;
-        public static readonly RoutedCommand CancelConnectionDraggingCommand;
-
-        #endregion Dependency Property/Event Definitions
-
-        #region Private Data Members
-
-        /// <summary>
-        ///     Cached reference to the NodeItemsControl in the visual-tree.
-        /// </summary>
-        private NodeItemsControl nodeItemsControl = null;
-
-        /// <summary>
-        ///     Cached reference to the ItemsControl for connections in the visual-tree.
-        /// </summary>
-        private ItemsControl connectionItemsControl;
-
-        /// <summary>
-        ///     Cached list of currently selected nodes.
-        /// </summary>
-        private List<object> initialSelectedNodes;
-
-        #endregion Private Data Members
 
         #region Private Methods
 
-        /// <summary>
-        ///     Static constructor.
-        /// </summary>
-        static NodeView()
-        {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(NodeView),
-                new FrameworkPropertyMetadata(typeof(NodeView)));
-
-            var inputs = new InputGestureCollection();
-            inputs.Add(new KeyGesture(Key.A, ModifierKeys.Control));
-            SelectAllCommand = new RoutedCommand("SelectAll", typeof(NodeView), inputs);
-
-            inputs = new InputGestureCollection();
-            inputs.Add(new KeyGesture(Key.Escape));
-            SelectNoneCommand = new RoutedCommand("SelectNone", typeof(NodeView), inputs);
-
-            inputs = new InputGestureCollection();
-            inputs.Add(new KeyGesture(Key.I, ModifierKeys.Control));
-            InvertSelectionCommand = new RoutedCommand("InvertSelection", typeof(NodeView), inputs);
-
-            CancelConnectionDraggingCommand = new RoutedCommand("CancelConnectionDragging", typeof(NodeView));
-
-            var binding = new CommandBinding();
-            binding.Command = SelectAllCommand;
-            binding.Executed += SelectAll_Executed;
-            CommandManager.RegisterClassCommandBinding(typeof(NodeView), binding);
-
-            binding = new CommandBinding();
-            binding.Command = SelectNoneCommand;
-            binding.Executed += SelectNone_Executed;
-            CommandManager.RegisterClassCommandBinding(typeof(NodeView), binding);
-
-            binding = new CommandBinding();
-            binding.Command = InvertSelectionCommand;
-            binding.Executed += InvertSelection_Executed;
-            CommandManager.RegisterClassCommandBinding(typeof(NodeView), binding);
-
-            binding = new CommandBinding();
-            binding.Command = CancelConnectionDraggingCommand;
-            binding.Executed += CancelConnectionDragging_Executed;
-            CommandManager.RegisterClassCommandBinding(typeof(NodeView), binding);
-        }
 
         /// <summary>
         ///     Executes the 'SelectAll' command.
@@ -836,7 +837,7 @@
             // Cache the parts of the visual tree that we need access to later.
             //
 
-            nodeItemsControl = (NodeItemsControl)Template.FindName("PART_NodeItemsControl", this);
+            nodeItemsControl = (NodesControl)Template.FindName("PART_NodeItemsControl", this);
             if (nodeItemsControl == null)
             {
                 throw new ApplicationException(
@@ -906,7 +907,7 @@
 
             for (var nodeIndex = 0; ; ++nodeIndex)
             {
-                NodeItem nodeItem = (NodeItem)nodeItemsControl.ItemContainerGenerator.ContainerFromIndex(nodeIndex);
+                Node nodeItem = (Node)nodeItemsControl.ItemContainerGenerator.ContainerFromIndex(nodeIndex);
                 if (nodeItem == null)
                 {
                     break;
@@ -928,9 +929,9 @@
         ///     Otherwise 'node' can actually be a 'NodeItem' in which case it is
         ///     simply returned.
         /// </summary>
-        internal NodeItem FindAssociatedNodeItem(object node)
+        internal Node FindAssociatedNodeItem(object node)
         {
-            NodeItem nodeItem = node as NodeItem;
+            Node nodeItem = node as Node;
             if (nodeItem == null)
             {
                 nodeItem = nodeItemsControl.FindAssociatedNodeItem(node);

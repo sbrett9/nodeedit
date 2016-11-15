@@ -15,7 +15,6 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Resources/Locator.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/Resources/PipetteOperationItemTemplates.xaml" />
                 <x:Static Member="hr:Default.Instance" />
                 <ResourceDictionary Source="pack://application:,,,/Skins/MainSkin.xaml" />
             </ResourceDictionary.MergedDictionaries>

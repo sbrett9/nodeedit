@@ -7,8 +7,8 @@
              xmlns:utility="clr-namespace:MvvmLight13.Utility"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
-             x:Name="headControl">
-    <Canvas>
+             x:Name="headControl" LayoutUpdated="Head_OnLayoutUpdated">
+    <Grid>
         <Path Fill="{Binding Path=Fill, ElementName=headControl}" Stroke="Transparent">
             <Path.Data>
                 <PathGeometry Figures="{utility:MultiBinder {Binding Path=ChevAngle,ElementName=headControl},
@@ -20,5 +20,5 @@
                 <DropShadowEffect ShadowDepth="3" Direction="0" BlurRadius="3" Opacity="0.2" Color="White" />
             </Path.Effect>
         </Path>
-    </Canvas>
+    </Grid>
 </UserControl>

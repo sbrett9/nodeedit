@@ -15,8 +15,17 @@
     {
         public static Rect DetectCollisions(FrameworkElement rect1, FrameworkElement rect2)
         {
-            var r1 = new Rect(Canvas.GetLeft(rect1), Canvas.GetTop(rect1), rect1.ActualWidth, rect1.ActualHeight);
-            var r2 = new Rect(Canvas.GetLeft(rect2), Canvas.GetTop(rect2), rect2.ActualWidth, rect2.ActualHeight);
+            var r1Left = Canvas.GetLeft(rect1);
+            var r1Top = Canvas.GetTop(rect1);
+            var r1Width = rect1.ActualWidth;
+            var r1Height = rect1.ActualHeight;
+            var r2Left = Canvas.GetLeft(rect2);
+            var r2Top = Canvas.GetTop(rect2);
+            var r2Width = rect2.ActualWidth;
+            var r2Height = rect2.ActualHeight;
+               
+            var r1 = new Rect(r1Left, r1Top ,r1Width ,r1Height );
+            var r2 = new Rect(r2Left, r2Top,r2Width,r2Height);
             r1.Intersect(r2);
             return r1;
         }
@@ -792,5 +801,6 @@
                 Trace.WriteLine("}");
             }
         }
+
     }
 }

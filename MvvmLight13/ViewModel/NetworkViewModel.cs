@@ -1,8 +1,9 @@
 ﻿namespace MvvmLight13.ViewModel
 {
     using System;
+    using Interfaces;
+    using Interfaces.Utils;
     using Utility;
-    using Utility.Utils;
 
     /// <summary>
     /// Defines a network of nodes and connections between the nodes.
@@ -14,25 +15,25 @@
         /// <summary>
         /// The collection of nodes in the network.
         /// </summary>
-        private ImpObservableCollection<OperationViewModel> nodes = null;
+        private ImpObservableCollection<NodeViewModelBase> nodes = null;
 
         /// <summary>
         /// The collection of connections in the network.
         /// </summary>
-        private ImpObservableCollection<ConnectionViewModel> connections = null;
+        private ImpObservableCollection<EdgeViewModel> edges = null;
 
         #endregion Internal Data Members
 
         /// <summary>
         /// The collection of nodes in the network.
         /// </summary>
-        public ImpObservableCollection<OperationViewModel> Nodes
+        public ImpObservableCollection<NodeViewModelBase> Nodes
         {
             get
             {
                 if (nodes == null)
                 {
-                    nodes = new ImpObservableCollection<OperationViewModel>();
+                    nodes = new ImpObservableCollection<NodeViewModelBase>();
                 }
 
                 return nodes;
@@ -42,17 +43,17 @@
         /// <summary>
         /// The collection of connections in the network.
         /// </summary>
-        public ImpObservableCollection<ConnectionViewModel> Connections
+        public ImpObservableCollection<EdgeViewModel> Edges
         {
             get
             {
-                if (connections == null)
+                if (edges == null)
                 {
-                    connections = new ImpObservableCollection<ConnectionViewModel>();
-                    connections.ItemsRemoved += new EventHandler<CollectionItemsChangedEventArgs>(connections_ItemsRemoved);
+                    edges = new ImpObservableCollection<EdgeViewModel>();
+                    edges.ItemsRemoved += new EventHandler<CollectionItemsChangedEventArgs>(connections_ItemsRemoved);
                 }
 
-                return connections;
+                return edges;
             }
         }
 
@@ -63,10 +64,9 @@
         /// </summary>
         private void connections_ItemsRemoved(object sender, CollectionItemsChangedEventArgs e)
         {
-            foreach (ConnectionViewModel connection in e.Items)
+            foreach (EdgeViewModel connection in e.Items)
             {
-                connection.SourceConnector = null;
-                connection.DestConnector = null;
+                connection.AttachedNode = null;
             }
         }
 
